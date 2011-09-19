@@ -63,6 +63,9 @@ Vector3d ks = Vector3d(255.0f/255.0f, 0.0f/255.0f, 0.0f/255.0f);
 vector<Vector3d> pl_pos, pl_color, dl_dir, dl_color;
 // Default specular term power
 double sp = 1.0f;
+// Default toon shading option
+bool toon = false;
+int toon_intervals = 1;
 
 void initScene(){
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear to black, fully transparent
@@ -88,8 +91,20 @@ void myReshape(int w, int h) {
 
 }
 
+double toon_interpolate(GLfloat val) {
+  double interval = 1.0/(float) toon_intervals;
+  for( double i = 0.0; i < 1.0; i += interval ) {
+    if( (double) val > i && (double) val < i + interval ) {
+      return (GLfloat) i + interval/2;
+    }
+  }
+}
+
 void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
-  glColor3f(r, g, b);
+  if( !toon ) 
+    glColor3f(r, g, b);
+  else
+    glColor3f(toon_interpolate(r), toon_interpolate(g), toon_interpolate(b));
   glVertex2f(x+0.5, y+0.5);
 }
 
@@ -201,7 +216,7 @@ void myFrameMove() {
 }
 
 void usage() {
-  cout << "Usage is -ka r g b -kd r g b -ks r g b -sp v -pl x y z r g b -dl x y z r g b\n";
+  cout << "Usage is -ka r g b -kd r g b -ks r g b -sp v -pl x y z r g b -dl x y z r g b -toon intervals\n";
   exit(0);
 }
 
@@ -243,6 +258,11 @@ int main(int argc, char *argv[]) {
       dl_dir.push_back( Vector3d(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3])) );
       dl_color.push_back( Vector3d(atof(argv[i+4]), atof(argv[i+5]), atof(argv[i+6])) );
       i += 6;
+    }
+    else if (strcmp(argv[i], "-toon")==0i && i + 1 < argc) {
+      toon = true;
+      toon_intervals = atoi(argv[i+1]);
+      i += 1;
     }
     else {
       usage();
