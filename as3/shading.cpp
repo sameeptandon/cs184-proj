@@ -17,8 +17,8 @@ USING_PART_OF_NAMESPACE_EIGEN
 #endif
 
 #ifdef OSX
+#include <OpenGL/gl.h>
 #include <GLUT/glut.h>
-#include <OpenGL/glu.h>
 #else
 #include <GL/glut.h>
 #include <GL/glu.h>
@@ -148,7 +148,7 @@ void shaded_sphere(int radius) {
       pixel_color += amb;
 
       // Set the red pixel
-      setPixel(viewport.w/2 + x, viewport.h/2 + y, pixel_color(0), pixel_color(1), pixel_color(2));
+      setPixel(viewport.w/2.0 + x, viewport.h/2.0 + y, pixel_color(0), pixel_color(1), pixel_color(2));
     }
   }
   glEnd();
@@ -163,11 +163,8 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
+  shaded_sphere(min(viewport.w, viewport.h) / 2.5);
 
-  // Start drawing
-  //circle(plotX, plotY, min(viewport.w, viewport.h) / 4);
-
-  shaded_sphere(min(viewport.w, viewport.h) / 3);
   glFlush();
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
 }

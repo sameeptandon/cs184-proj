@@ -7,18 +7,16 @@ cc          = gcc
 
 #-----------------------------------------
 #Optimization ----------------------------
-OPTMAC = -fast
+OPTMAC =
 
-TARGETS = glut_example
+TARGETS = shading
 
-OBJECTS = glut_example.o
+OBJECTS = shading.o
 
 #-----------------------------------------
 # Mac specific stuff
-FRAMEWORK = -framework GLUT
-FRAMEWORK += -framework OpenGL
-MACLIBS = -lGL -lGLU -lm -lstdc++ 
-MACINCS = -L"/System/Library/Frameworks/OpenGL.framework/Libraries"
+MACINCS =  -I/opt/local/include/eigen2/
+MACLIBS = -L"/System/Library/Frameworks/OpenGL.framework/Libraries" -L"/System/Library/Frameworks/GLUT.framework" -framework GLUT -framework OpenGL -lGL -lGLU -L/usr/X11R6/lib
 
 #-----------------------------------------
 CCOPTSMAC = $(OPTMAC) $(MACINCS) -DOSX
@@ -35,9 +33,9 @@ clean:
 #-----------------------------------------
 #-----------------------------------------
 
-glut_example: glut_example.o
-	$(CC) glut_example.o $(FRAMEWORK) $(LDOPTSMAC) -o glut_example
+shading: shading.o
+	$(CC) shading.o $(FRAMEWORK) $(LDOPTSMAC) -o shading
 
-glut_example.o: glut_example.cpp
-	$(CC) glut_example.cpp -c $(CCOPTSMAC)
+shading.o: shading.cpp
+	$(CC) shading.cpp -c $(CCOPTSMAC)
 
