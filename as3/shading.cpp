@@ -118,15 +118,14 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
   // Draw inner circle
   glBegin(GL_POINTS);
 
-  for (double y = -radius + y_offset; y <= radius + y_offset; y++) {
+  for (double y = -radius; y <= radius; y++) {
     int width = (int)(sqrt((double)(radius*radius-y*y)) + 0.5f);
-    for (double x = -width + x_offset; x <= width + x_offset; x++) {
+    for (double x = -width; x <= width; x++) {
 
       Vector3d pixel_color = Vector3d::Zero();
 
       // Calculate normal
-      double z = sqrt(radius*radius - (x-x_offset)*(x-x_offset) - (y-y_offset)*(y-y_offset));
-
+      double z = sqrt(radius*radius - x*x - y*y); 
       Vector3d normal = Vector3d(x,y,z);
       Vector3d normal_hat = normal.normalized();
 
@@ -139,7 +138,7 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
       // Loop over point lights
       for( int i = 0; i < pl_color.size(); i++ ) {
         // Diffuse light
-        Vector3d i_hat_pl = ((pl_pos[i] * radius) - normal).normalized();
+        Vector3d i_hat_pl = ((pl_pos[i] * radius) - Vector3d(x_offset, y_offset,0) - normal).normalized();
         double i_pl_dot_n = (i_hat_pl.dot( normal_hat ));
         Vector3d diff_pl = kd.cwise() * pl_color[i] * max(0.0, i_pl_dot_n);
         // Specular light 
@@ -169,7 +168,16 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
       pixel_color += amb;
 
       // Set the red pixel
-      setPixel(min(viewport.w, viewport.h)/2.0 + x, min(viewport.w, viewport.h)/2.0 + y, pixel_color(0), pixel_color(1), pixel_color(2));
+      setPixel(min(viewport.w, viewport.h)/2.0 + x + x_offset, min(viewport.w, viewport.h)/2.0 + y + y_offset, pixel_color(0), pixel_color(1), pixel_color(2));
+    }
+  }
+
+  for (int i = 0 ; i < pl_pos.size(); i++) {
+    Vector3d lightPos = pl_pos[i]*radius;
+    for (int x = 0; x < 5; x++) {
+      for (int y = 0; y < 5; y++) { 
+        setPixel(lightPos(0)+x+min(viewport.w, viewport.h)/2.0, min(viewport.w,viewport.h)/2.0 + lightPos(1)+y, pl_color[i](0), pl_color[i](1), pl_color[i](2));
+      }
     }
   }
   glEnd();
