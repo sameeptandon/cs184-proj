@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-
+#include "ray_sphere_check.h"
 //Using Eigen library
 USING_PART_OF_NAMESPACE_EIGEN
 

@@ -1,7 +1,7 @@
 #include <Eigen/Core>
 USING_PART_OF_NAMESPACE_EIGEN
 
-bool intersect(Vector3d& ray_orig, Vector3d& ray_dir, double sphere_radius)
+bool intersect(Vector3d& ray_orig, Vector3d& ray_dir, float& t, double sphere_radius)
 {
     //Compute A, B and C coefficients
     float a = ray_dir.dot(ray_dir);
@@ -45,13 +45,13 @@ bool intersect(Vector3d& ray_orig, Vector3d& ray_dir, double sphere_radius)
     // if t0 is less than zero, the intersection point is at t1
     if (t0 < 0)
     {
-        //t = t1;
+        t = t1;
         return true;
     }
     // else the intersection point is at t0
     else
     {
-        //t = t0;
+        t = t0;
         return true;
     }
 }
