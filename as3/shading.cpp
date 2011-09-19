@@ -114,18 +114,18 @@ void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
   glVertex2f(x+0.5, y+0.5);
 }
 
-void shaded_sphere(int radius) {
+void shaded_sphere(int radius, int x_offset, int y_offset) {
   // Draw inner circle
   glBegin(GL_POINTS);
 
-  for (double y = -radius; y <= radius; y++) {
+  for (double y = -radius + y_offset; y <= radius + y_offset; y++) {
     int width = (int)(sqrt((double)(radius*radius-y*y)) + 0.5f);
-    for (double x = -width; x <= width; x++) {
+    for (double x = -width + x_offset; x <= width + x_offset; x++) {
 
       Vector3d pixel_color = Vector3d::Zero();
 
       // Calculate normal
-      double z = sqrt(radius*radius - x*x - y*y);
+      double z = sqrt(radius*radius - (x-x_offset)*(x-x_offset) - (y-y_offset)*(y-y_offset));
 
       Vector3d normal = Vector3d(x,y,z);
       Vector3d normal_hat = normal.normalized();
@@ -169,7 +169,7 @@ void shaded_sphere(int radius) {
       pixel_color += amb;
 
       // Set the red pixel
-      setPixel(viewport.w/2.0 + x, viewport.h/2.0 + y, pixel_color(0), pixel_color(1), pixel_color(2));
+      setPixel(min(viewport.w, viewport.h)/2.0 + x, min(viewport.w, viewport.h)/2.0 + y, pixel_color(0), pixel_color(1), pixel_color(2));
     }
   }
   glEnd();
@@ -184,7 +184,8 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
-  shaded_sphere(min(viewport.w, viewport.h) / 2.5);
+  shaded_sphere(min(viewport.w, viewport.h) / 2.5, 0, 0);
+  shaded_sphere(min(viewport.w, viewport.h) / 2.5, 600, 0);
 
   glFlush();
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
@@ -319,8 +320,8 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
   // Initalize theviewport size
-  viewport.w = 900;
-  viewport.h = 900;
+  viewport.w = 1200;
+  viewport.h = 600;
 
   //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);
