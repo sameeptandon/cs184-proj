@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <Eigen/Core>
+#include <Eigen/Geometry>
 
 //Using Eigen library
 USING_PART_OF_NAMESPACE_EIGEN
@@ -66,6 +67,11 @@ double sp = 1.0f;
 // Default toon shading option
 bool toon = false;
 int toon_intervals = 1;
+int pressed_mouse_button; // get mouse button state
+double rx = 0;
+double ry = 0;
+int last_x = 0;
+int last_y = 0;
 
 void initScene(){
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear to black, fully transparent
@@ -225,6 +231,43 @@ void processNormalKeys(unsigned char key, int x, int y) {
     exit(0);
 }
 
+void MouseMotion(int x, int y)
+{
+  //rx += x - last_x;
+  //ry += last_y - y;
+
+  rx = ((x - last_x) / 180.0) * M_PI;
+  ry = ((y - last_y) / 180.0) * M_PI;
+
+  Matrix3d rot_y = Eigen::AngleAxisd(ry, Vector3d::UnitX()).toRotationMatrix();
+  Matrix3d rot_x = Eigen::AngleAxisd(rx, Vector3d::UnitY()).toRotationMatrix();
+
+  for (int i = 0; i < pl_pos.size(); i++) {
+    pl_pos[i] = rot_x * rot_y * pl_pos[i];
+  }
+
+  for (int i = 0; i < dl_dir.size(); i++) {
+    dl_dir[i] = rot_x * rot_y * dl_dir[i];
+  }
+
+  last_x = x;
+  last_y = y;
+  glutPostRedisplay();
+
+}
+
+void processMouse(int button, int state, int x, int y) {
+  if(state == GLUT_DOWN) {
+    pressed_mouse_button = button;
+    if (button == GLUT_LEFT_BUTTON) {
+      last_x = x;
+      last_y = y;
+    }
+  }
+
+
+}
+
 //****************************************************
 // the usual stuff, nothing exciting here
 //****************************************************
@@ -276,8 +319,8 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
   // Initalize theviewport size
-  viewport.w = 400;
-  viewport.h = 400;
+  viewport.w = 900;
+  viewport.h = 900;
 
   //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);
@@ -286,6 +329,8 @@ int main(int argc, char *argv[]) {
 
   //Exit on spacebar
   glutKeyboardFunc(processNormalKeys);
+  glutMotionFunc(MouseMotion);
+  glutMouseFunc(processMouse);
   // Initialize timer variable
 #ifdef _WIN32
   lastTime = GetTickCount();
