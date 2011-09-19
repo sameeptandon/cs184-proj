@@ -127,9 +127,9 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
   // Draw inner circle
   glBegin(GL_POINTS);
 
-  for (double y = -radius; y <= radius; y++) {
+  for (int y = -radius; y <= radius; y++) {
     int width = (int)(sqrt((double)(radius*radius-y*y)) + 0.5f);
-    for (double x = -width; x <= width; x++) {
+    for (int x = -width; x <= width; x++) {
 
       Vector3d pixel_color = Vector3d::Zero();
 
@@ -149,23 +149,16 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
       for( int i = 0; i < pl_color.size(); i++ ) {
        bool intersection = false;
         double their_t;
-        Vector3d i_pl = ((pl_pos[i] * radius) - Vector3d(x, y,0));
+        Vector3d i_pl = -((pl_pos[i] * radius) - Vector3d(x_offset, y_offset,0)- normal);
 
-        //Vector3d i_pos =  (pl_pos[i] * radius) - Vector3d(x_offset, y_offset,0);
-       double my_t;
-       Vector3d lightPos = (pl_pos[i]*radius) - Vector3d(x_offset, y_offset,0); 
-        //cout << lightPos.transpose() << endl;
-        //cout << i_pl.transpose() << endl; 
-        //cout << intersect(lightPos, i_pl, my_t, radius) << endl; 
-        //cout << my_t << endl;
-        for( int j = 0; j < spheres.size(); j++ ) {
+       for( int j = 0; j < spheres.size(); j++ ) {
           Vector3d pl_trans = ((pl_pos[i] * radius)) - Vector3d(spheres[j].x_offset, spheres[j].y_offset,0);
           if( spheres[j].radius == radius && spheres[j].x_offset == x_offset && spheres[j].y_offset == y_offset ) {
             continue;
           }
           else {
-            if (intersect( pl_trans, i_pl, their_t, (double) radius) ) {
-              cout << "INTERSECT" << endl; 
+            if (intersect( pl_trans, i_pl, their_t, (double) radius) && their_t < 1.0) {
+              //cout << "INTERSECT" << endl; 
               intersection =  true;
               break;
             }
@@ -187,25 +180,46 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
       }
       // Loop over directional lights
       for( int i = 0; i < dl_color.size(); i++ ) {
-        // Diffuse light
-        Vector3d i_hat_dl = dl_dir[i].normalized();
-        double i_dl_dot_n = (i_hat_dl.dot( normal_hat ));
-        Vector3d diff_dl = kd.cwise() * dl_color[i] * max(0.0, i_dl_dot_n);
-        // Specular light 
-        Vector3d r_dl = -i_hat_dl + 2 * i_dl_dot_n * normal_hat;
-        Vector3d spec_dl = ks.cwise() * dl_color[i] * pow(max(0.0, r_dl.normalized().dot( Vector3d(0.0,0.0,1.0) )), sp);
 
-        pixel_color += diff_dl + spec_dl;
-        intensity += dl_color[i];
+        bool intersection = false;
+        double their_t;
+        Vector3d i_dl = dl_dir[i];
+          
+        for( int j = 0; j < spheres.size(); j++ ) {
+          Vector3d dl_pos = 2*(Vector3d(spheres[j].x_offset, spheres[j].y_offset, 0) - Vector3d(x_offset, y_offset, 0)) + normal;
+
+          if( spheres[j].radius == radius && spheres[j].x_offset == x_offset && spheres[j].y_offset == y_offset ) {
+            continue;
+          }
+          else {
+            if (intersect(dl_pos, i_dl, their_t, (double) radius)) {
+              //cout << "INTERSECT" << endl; 
+              intersection =  true;
+              break;
+            }
+          }
+
+        }
+        if( !intersection ) {
+          // Diffuse light
+          Vector3d i_hat_dl = -dl_dir[i].normalized();
+          double i_dl_dot_n = (i_hat_dl.dot( normal_hat ));
+          Vector3d diff_dl = kd.cwise() * dl_color[i] * max(0.0, i_dl_dot_n);
+          // Specular light 
+          Vector3d r_dl = -i_hat_dl + 2 * i_dl_dot_n * normal_hat;
+          Vector3d spec_dl = ks.cwise() * dl_color[i] * pow(max(0.0, r_dl.normalized().dot( Vector3d(0.0,0.0,1.0) )), sp);
+
+          pixel_color += diff_dl + spec_dl;
+          intensity += dl_color[i];
+        }
       }
 
       // Ambient light
       Vector3d amb = ka.cwise() * intensity;
 
       pixel_color += amb;
-
       // Set the red pixel
-      setPixel(min(viewport.w, viewport.h)/2.0 + x + x_offset, min(viewport.w, viewport.h)/2.0 + y + y_offset, pixel_color(0), pixel_color(1), pixel_color(2));
+      setPixel(x + x_offset, y + y_offset, pixel_color(0), pixel_color(1), pixel_color(2));
     }
   }
 
@@ -213,7 +227,7 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
     Vector3d lightPos = pl_pos[i]*radius;
     for (int x = 0; x < 5; x++) {
       for (int y = 0; y < 5; y++) { 
-        setPixel(lightPos(0)+x+min(viewport.w, viewport.h)/2.0, min(viewport.w,viewport.h)/2.0 + lightPos(1)+y, pl_color[i](0), pl_color[i](1), pl_color[i](2));
+        setPixel(lightPos(0)+x, lightPos(1)+y, pl_color[i](0), pl_color[i](1), pl_color[i](2));
       }
     }
   }
@@ -229,10 +243,17 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
-  sphere_t sphere1 = {min(viewport.w, viewport.h) / 2.5, 0, 0};
-  sphere_t sphere2 = {min(viewport.w, viewport.h) / 2.5, viewport.w/2.0, 0};
+  double trans_x = viewport.w / 4.0;
+  double trans_y = viewport.h / 4.0;
+
+  sphere_t sphere1 = {min(viewport.w, viewport.h) / 5.0, trans_x, trans_y};
+  sphere_t sphere2 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y};
+  //sphere_t sphere3 = {min(viewport.w, viewport.h) / 5.0, trans_x, trans_y + viewport.h/2.0};
+  //sphere_t sphere4 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y + viewport.h/2.0};
   spheres.push_back(sphere1);
   spheres.push_back(sphere2);
+  //spheres.push_back(sphere3);
+  //spheres.push_back(sphere4);
   for( int i = 0; i < spheres.size(); i++ ) {
     shaded_sphere(spheres[i].radius, spheres[i].x_offset, spheres[i].y_offset);
   }
@@ -280,6 +301,12 @@ void usage() {
 void processNormalKeys(unsigned char key, int x, int y) {
   if( key == 32 )
     exit(0);
+  if ( key == 'x') {
+    for (int i = 0; i < pl_pos.size(); i++) {
+      cout << "-pl " << pl_pos[i].transpose() << " " << pl_color[i].transpose() << " ";
+    }
+    cout << endl; 
+  }
 }
 
 void MouseMotion(int x, int y)
@@ -394,6 +421,15 @@ int main(int argc, char *argv[]) {
   glutDisplayFunc(myDisplay);					// function to run when its time to draw something
   glutReshapeFunc(myReshape);					// function to run when the window gets resized
   // glutIdleFunc(myFrameMove);			
+  //
+  /*
+  Vector3d orig = Vector3d(-5, 5.0/sqrt(2.0), 0.0);
+  Vector3d dir = Vector3d(10, 0, 0);
+  double t;
+  cout << intersect(orig, dir, t, 5) << endl; 
+  cout << t << endl; 
+  */
+
 
   glutMainLoop();							// infinite loop that will keep drawing and resizing and whatever else
 
