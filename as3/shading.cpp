@@ -8,6 +8,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include "ray_sphere_check.h"
+
 //Using Eigen library
 USING_PART_OF_NAMESPACE_EIGEN
 
@@ -73,6 +74,14 @@ double ry = 0;
 int last_x = 0;
 int last_y = 0;
 
+typedef struct {
+  int radius;
+  int x_offset;
+  int y_offset;
+} sphere_t;
+
+vector<sphere_t> spheres;
+
 void initScene(){
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear to black, fully transparent
 
@@ -135,18 +144,39 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
       assert( pl_color.size() == pl_pos.size());
       assert( dl_color.size() == dl_dir.size());
 
+
       // Loop over point lights
       for( int i = 0; i < pl_color.size(); i++ ) {
-        // Diffuse light
-        Vector3d i_hat_pl = ((pl_pos[i] * radius) - Vector3d(x_offset, y_offset,0) - normal).normalized();
-        double i_pl_dot_n = (i_hat_pl.dot( normal_hat ));
-        Vector3d diff_pl = kd.cwise() * pl_color[i] * max(0.0, i_pl_dot_n);
-        // Specular light 
-        Vector3d r_pl = -i_hat_pl + 2 * i_pl_dot_n * normal_hat;
-        Vector3d spec_pl = ks.cwise() * pl_color[i] * pow(max(0.0, r_pl.normalized().dot( Vector3d(0.0,0.0,1.0) )), sp);
+        bool intersection = false;
+        float their_t;
+        Vector3d i_pl = ((pl_pos[i] * radius) - Vector3d(x_offset, y_offset,0) - normal);
+        Vector3d i_pos =  (pl_pos[i] * radius) - Vector3d(x_offset, y_offset,0);
+        for( int j = 0; j < spheres.size(); j++ ) {
+          Vector3d pl_trans = i_pos - Vector3d(spheres[j].x_offset, spheres[j].y_offset,0);
+          if( spheres[j].radius == radius && spheres[j].x_offset == x_offset && spheres[j].y_offset == y_offset ) {
+            continue;
+          }
+          else {
+            intersect( pl_trans, i_pl, their_t, (double) radius);
+            if( their_t <= 1.0 ) {
+              intersection =  true;
+              break;
+            }
+          }
 
-        pixel_color += diff_pl + spec_pl;
-        intensity += pl_color[i];
+        }
+        if( !intersection ) {
+          // Diffuse light
+          Vector3d i_hat_pl = ((pl_pos[i] * radius) - Vector3d(x_offset, y_offset,0) - normal).normalized();
+          double i_pl_dot_n = (i_hat_pl.dot( normal_hat ));
+          Vector3d diff_pl = kd.cwise() * pl_color[i] * max(0.0, i_pl_dot_n);
+          // Specular light 
+          Vector3d r_pl = -i_hat_pl + 2 * i_pl_dot_n * normal_hat;
+          Vector3d spec_pl = ks.cwise() * pl_color[i] * pow(max(0.0, r_pl.normalized().dot( Vector3d(0.0,0.0,1.0) )), sp);
+
+          pixel_color += diff_pl + spec_pl;
+          intensity += pl_color[i];
+        }
       }
       // Loop over directional lights
       for( int i = 0; i < dl_color.size(); i++ ) {
@@ -192,8 +222,13 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
-  shaded_sphere(min(viewport.w, viewport.h) / 2.5, 0, 0);
-  shaded_sphere(min(viewport.w, viewport.h) / 2.5, 600, 0);
+  sphere_t sphere1 = {min(viewport.w, viewport.h) / 2.5, 0, 0};
+  sphere_t sphere2 = {min(viewport.w, viewport.h) / 2.5, viewport.w/2.0, 0};
+  spheres.push_back(sphere1);
+  spheres.push_back(sphere2);
+  for( int i = 0; i < spheres.size(); i++ ) {
+    shaded_sphere(spheres[i].radius, spheres[i].x_offset, spheres[i].y_offset);
+  }
 
   glFlush();
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
