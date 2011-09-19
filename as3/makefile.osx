@@ -7,7 +7,7 @@ cc          = gcc
 
 #-----------------------------------------
 #Optimization ----------------------------
-OPTMAC =
+OPTMAC = -O3
 
 TARGETS = shading
 
