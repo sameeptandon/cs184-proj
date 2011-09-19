@@ -147,18 +147,25 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
 
       // Loop over point lights
       for( int i = 0; i < pl_color.size(); i++ ) {
-        bool intersection = false;
-        float their_t;
-        Vector3d i_pl = ((pl_pos[i] * radius) - Vector3d(x_offset, y_offset,0) - normal);
-        Vector3d i_pos =  (pl_pos[i] * radius) - Vector3d(x_offset, y_offset,0);
+       bool intersection = false;
+        double their_t;
+        Vector3d i_pl = ((pl_pos[i] * radius) - Vector3d(x, y,0));
+
+        //Vector3d i_pos =  (pl_pos[i] * radius) - Vector3d(x_offset, y_offset,0);
+       double my_t;
+       Vector3d lightPos = (pl_pos[i]*radius) - Vector3d(x_offset, y_offset,0); 
+        //cout << lightPos.transpose() << endl;
+        //cout << i_pl.transpose() << endl; 
+        //cout << intersect(lightPos, i_pl, my_t, radius) << endl; 
+        //cout << my_t << endl;
         for( int j = 0; j < spheres.size(); j++ ) {
-          Vector3d pl_trans = i_pos - Vector3d(spheres[j].x_offset, spheres[j].y_offset,0);
+          Vector3d pl_trans = ((pl_pos[i] * radius)) - Vector3d(spheres[j].x_offset, spheres[j].y_offset,0);
           if( spheres[j].radius == radius && spheres[j].x_offset == x_offset && spheres[j].y_offset == y_offset ) {
             continue;
           }
           else {
-            intersect( pl_trans, i_pl, their_t, (double) radius);
-            if( their_t <= 1.0 ) {
+            if (intersect( pl_trans, i_pl, their_t, (double) radius) ) {
+              cout << "INTERSECT" << endl; 
               intersection =  true;
               break;
             }

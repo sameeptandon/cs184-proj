@@ -1,15 +1,16 @@
 #include <Eigen/Core>
 USING_PART_OF_NAMESPACE_EIGEN
+using namespace std;
 
-bool intersect(Vector3d& ray_orig, Vector3d& ray_dir, float& t, double sphere_radius)
+bool intersect(Vector3d& ray_orig, Vector3d& ray_dir, double& t, double sphere_radius)
 {
     //Compute A, B and C coefficients
-    float a = ray_dir.dot(ray_dir);
-    float b = 2 * ray_dir.dot(ray_orig);
-    float c = ray_orig.dot(ray_orig) - (sphere_radius * sphere_radius);
+    double a = ray_dir.dot(ray_dir);
+    double b = 2 * ray_dir.dot(ray_orig);
+    double c = ray_orig.dot(ray_orig) - (sphere_radius * sphere_radius);
 
     //Find discriminant
-    float disc = b * b - 4 * a * c;
+    double disc = b * b - 4 * a * c;
     
     // if discriminant is negative there are no real roots, so return 
     // false as ray misses sphere
@@ -17,22 +18,22 @@ bool intersect(Vector3d& ray_orig, Vector3d& ray_dir, float& t, double sphere_ra
         return false;
 
     // compute q as described above
-    float distSqrt = sqrtf(disc);
-    float q;
+    double distSqrt = sqrtf(disc);
+    double q;
     if (b < 0)
         q = (-b - distSqrt)/2.0;
     else
         q = (-b + distSqrt)/2.0;
 
     // compute t0 and t1
-    float t0 = q / a;
-    float t1 = c / q;
+    double t0 = q / a;
+    double t1 = c / q;
 
     // make sure t0 is smaller than t1
     if (t0 > t1)
     {
         // if t0 is bigger than t1 swap them around
-        float temp = t0;
+        double temp = t0;
         t0 = t1;
         t1 = temp;
     }
