@@ -57,9 +57,9 @@ Viewport	viewport;
 int 		plotX = 0;
 int 		plotY = 0;
 // Some default coefficients
-Vector3d ka = Vector3d(255.0f/255.0f, 0.0f/255.0f, 0.0f/255.0f);
-Vector3d kd = Vector3d(255.0f/255.0f, 0.0f/255.0f, 0.0f/255.0f);
-Vector3d ks = Vector3d(255.0f/255.0f, 0.0f/255.0f, 0.0f/255.0f);
+Vector3d ka = Vector3d(0.0f/255.0f, 0.0f/255.0f, 0.0f/255.0f);
+Vector3d kd = Vector3d(0.0f/255.0f, 0.0f/255.0f, 0.0f/255.0f);
+Vector3d ks = Vector3d(0.0f/255.0f, 0.0f/255.0f, 0.0f/255.0f);
 // Default lighting
 vector<Vector3d> pl_pos, pl_color, dl_dir, dl_color;
 // Default specular term power
@@ -100,7 +100,7 @@ void myReshape(int w, int h) {
 double toon_interpolate(GLfloat val) {
   double interval = 1.0/(float) toon_intervals;
   for( double i = 0.0; i < 1.0; i += interval ) {
-    if( (double) val > i && (double) val < i + interval ) {
+    if( (double) val > i && (double) val <= i + interval ) {
       return (GLfloat) i + interval/2;
     }
   }
@@ -277,15 +277,15 @@ int main(int argc, char *argv[]) {
   int i = 0;
   while(++i != argc) {
     if (strcmp(argv[i], "-ka")==0 && i + 3 < argc) {
-      ka = Vector3d(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]));
+      ka = Vector3d(min(1.0, atof(argv[i+1])), min(1.0, atof(argv[i+2])), min(1.0, atof(argv[i+3])));
       i += 3;
     }
     else if (strcmp(argv[i], "-kd")==0 && i + 3 < argc) {
-      kd = Vector3d(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]));
+      kd = Vector3d(min(1.0, atof(argv[i+1])), min(1.0, atof(argv[i+2])), min(1.0, atof(argv[i+3])));
       i += 3;
     }
     else if (strcmp(argv[i], "-ks")==0 && i + 3 < argc) {
-      ks = Vector3d(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3]));
+      ks = Vector3d(min(1.0, atof(argv[i+1])), min(1.0, atof(argv[i+2])), min(1.0, atof(argv[i+3])));
       i += 3;
     }
     else if (strcmp(argv[i], "-sp")==0 && i + 1 < argc) {
