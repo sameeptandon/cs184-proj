@@ -68,6 +68,8 @@ double sp = 1.0f;
 // Default toon shading option
 bool toon = false;
 int toon_intervals = 1;
+// Default ground option (no ground)
+bool gnd = false;
 int pressed_mouse_button; // get mouse button state
 double rx = 0;
 double ry = 0;
@@ -315,12 +317,12 @@ void myDisplay() {
   
   // This should be done before any other objects are shaded
   // so that other objects go on top of it
-  shade_floor(min(viewport.w, viewport.h) / 2.5);
-/*
+  if( gnd ) {
+    shade_floor(min(viewport.w, viewport.h) / 2.5);
+  }
   for( int i = 0; i < spheres.size(); i++ ) {
     shaded_sphere(spheres[i].radius, spheres[i].x_offset, spheres[i].y_offset);
   }
-*/
   glFlush();
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
 }
@@ -443,10 +445,13 @@ int main(int argc, char *argv[]) {
       dl_color.push_back( Vector3d(atof(argv[i+4]), atof(argv[i+5]), atof(argv[i+6])) );
       i += 6;
     }
-    else if (strcmp(argv[i], "-toon")==0i && i + 1 < argc) {
+    else if (strcmp(argv[i], "-toon")==0 && i + 1 < argc) {
       toon = true;
       toon_intervals = atoi(argv[i+1]);
       i += 1;
+    }
+    else if (strcmp(argv[i], "-gnd")==0) {
+      gnd = true;
     }
     else {
       usage();
