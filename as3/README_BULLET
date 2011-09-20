@@ -1,0 +1,17 @@
+We implemented physical simulation of many spheres using Bullet Physics. We used BulletPhysics 2.77, available at http://bullet.googlecode.com/files/bullet-2.77.zip. The library can be built on unix using the commands
+
+cmake -DBUILD_SHARED_LIBS=ON . -G 'Unix Makefiles'
+sudo make install
+
+After installing the library, you need to modify the makefiles to include the library header files and link to the library binaries. This is shown in the mac makefile. 
+
+Finally, you need to enable bullet in shading.cpp by changing "#define BULLET 0" to "#define BULLET 1".  You should be able to compile the file at this point.
+
+To step through the physical simulation, use the '>' key to advance.
+
+
+We used code from the Bullet Hello World tutorial, available at: 
+
+http://bulletphysics.org/mediawiki-1.5.8/index.php/Hello_World
+
+to make this simulation run. 
