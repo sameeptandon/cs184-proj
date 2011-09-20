@@ -499,7 +499,6 @@ int main(int argc, char *argv[]) {
   viewport.h = 600;
 
   //spheres.clear();
-  sphere_t sphere1 = {min(viewport.w, viewport.h) / 2.5, trans_x, trans_y};
   if(ms) {
     trans_x = viewport.w/4.0;
     trans_y = viewport.h/4.0;
@@ -513,10 +512,12 @@ int main(int argc, char *argv[]) {
     spheres.push_back(sphere5);
   }
   else {
+    trans_x = viewport.w / 2.0;
+    trans_y = viewport.h / 2.0;
+    sphere_t sphere1 = {min(viewport.w, viewport.h) / 2.5, trans_x, trans_y};
+    spheres.push_back(sphere1);
   }
 
-  trans_x = viewport.w / 2.0;
-  trans_y = viewport.h / 2.0;
   //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);
   glutInitWindowPosition(0,0);
