@@ -102,6 +102,8 @@ void myReshape(int w, int h) {
   viewport.w = w;
   viewport.h = h;
 
+  trans_x = viewport.w / 2.0;
+  trans_y = viewport.h / 2.0;
   glViewport (0,0,viewport.w,viewport.h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -247,7 +249,7 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
-
+  spheres.clear();
   sphere_t sphere1 = {min(viewport.w, viewport.h) / 2.5, trans_x, trans_y};
   sphere_t sphere2 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y};
   sphere_t sphere3 = {min(viewport.w, viewport.h) / 5.0, trans_x, trans_y + viewport.h/2.0};
