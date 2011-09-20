@@ -1,0 +1,4 @@
+We used libfreeimage to write to file. We followed instructions at: http://stackoverflow.com/questions/5844858/how-to-take-screenshot-in-opengl
+
+for how to write to file. 
+
