@@ -6,5 +6,5 @@ Optional features:
 Toon shading: -toon <intervals> (# of intervals for toon shading to use, e.g. 10)
 Ground: -gnd (this shades the ground)
 Multiple spheres that shadow each other: -ms (please don't use with other options, including lighting)
-Hitting ">": Performs physics simulation (can't resize the window while doing this)
+Hitting ">": Performs physics simulation (can't resize the window while doing this). This requires Bullet - See README_BULLET
 Animation: drag mouse around, this rotates the light sources about the sphere
