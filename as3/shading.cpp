@@ -243,21 +243,21 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
 
 void shade_floor(int radius) {
   glBegin(GL_POINTS);
-  Vector3d normal_hat = Vector3d(0.0,1.0,0.0);
+  Vector3d normal_hat = Vector3d(0.0,cos(0.25),-sin(0.25));
   for (int x = 0; x < viewport.w; x++) {
     for (int y = 0; y < viewport.h; y++) {  
       Vector3d pixel_color = Vector3d::Zero();
     
-      Vector3d pos = Vector3d(x, 0, y);
+      Vector3d pos = Vector3d(x, 0, -y);
 
       // Calculate intensity
       Vector3d intensity = Vector3d::Zero();
 
       // Loop over point lights
       for( int i = 0; i < pl_color.size(); i++ ) {
-        Vector3d i_pl = -((pl_pos[i] * radius) + Vector3d(trans_x, trans_y, 0) - pos);
+        Vector3d i_pl = ((pl_pos[i] * radius) + Vector3d(trans_x, trans_y, 0) - pos);
         // Diffuse light
-        Vector3d i_hat_pl = -i_pl.normalized();
+        Vector3d i_hat_pl = i_pl.normalized();
         double i_pl_dot_n = (i_hat_pl.dot( normal_hat ));
         Vector3d diff_pl = kd.cwise() * pl_color[i] * max(0.0, i_pl_dot_n);
         // Specular light 
@@ -288,7 +288,7 @@ void shade_floor(int radius) {
       pixel_color += amb;
 //      cout << pixel_color(0) << ", " << pixel_color(1) << ", " << pixel_color(2) << endl;
       // Set the pixel color
-      setPixel(x, y/2, pixel_color(0), pixel_color(1), pixel_color(2));
+      setPixel(x, y/2, pixel_color(0)*(viewport.h-y)/viewport.h, pixel_color(1)*(viewport.h-y)/viewport.h, pixel_color(2)*(viewport.h-y)/viewport.h);
 
     }
   }
@@ -317,11 +317,11 @@ void myDisplay() {
   // This should be done before any other objects are shaded
   // so that other objects go on top of it
   shade_floor(min(viewport.w, viewport.h) / 2.5);
-
+/*
   for( int i = 0; i < spheres.size(); i++ ) {
     shaded_sphere(spheres[i].radius, spheres[i].x_offset, spheres[i].y_offset);
   }
-
+*/
   glFlush();
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
 }
