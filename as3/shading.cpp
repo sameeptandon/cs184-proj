@@ -27,6 +27,7 @@ USING_PART_OF_NAMESPACE_EIGEN
 #include <GL/glu.h>
 #endif
 
+#include "write_to_file.h"
 #include <time.h>
 #include <math.h>
 
@@ -379,10 +380,13 @@ void processNormalKeys(unsigned char key, int x, int y) {
       step_simulation(offsets);
       spheres.resize(0);
       for (int  j = 0; j < offsets.size(); j++) { 
-       sphere_t sphere1 = {min(viewport.w, viewport.h) / 25, trans_x+offsets[j][0]*10, trans_y + offsets[j][1]*10 - 300};
+       sphere_t sphere1 = {min(viewport.w, viewport.h) / 25, trans_x+offsets[j][0]*10, trans_y + offsets[j][1]*10 - 200};
         spheres.push_back(sphere1);
       }
       glutPostRedisplay();
+      char filename[256];
+      sprintf(filename, "nom.png");
+      save_opengl_image(viewport.w, viewport.h, filename); 
   }
 
 
