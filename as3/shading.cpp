@@ -223,7 +223,7 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
       Vector3d amb = ka.cwise() * intensity;
 
       pixel_color += amb;
-      // Set the red pixel
+      // Set the pixel color
       setPixel(x + x_offset, y + y_offset, pixel_color(0), pixel_color(1), pixel_color(2));
     }
   }
@@ -237,6 +237,60 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
     }
   }
   */
+  glEnd();
+}
+
+void shade_floor(int radius) {
+  glBegin(GL_POINTS);
+  Vector3d normal_hat = Vector3d(0.0,1.0,0.0);
+  for (int x = 0; x < viewport.w; x++) {
+    for (int y = 0; y < viewport.h; y++) {  
+      Vector3d pixel_color = Vector3d::Zero();
+    
+      Vector3d pos = Vector3d(x, 0, y);
+
+      // Calculate intensity
+      Vector3d intensity = Vector3d::Zero();
+
+      // Loop over point lights
+      for( int i = 0; i < pl_color.size(); i++ ) {
+        Vector3d i_pl = -((pl_pos[i] * radius) + Vector3d(trans_x, trans_y, 0) - pos);
+        // Diffuse light
+        Vector3d i_hat_pl = -i_pl.normalized();
+        double i_pl_dot_n = (i_hat_pl.dot( normal_hat ));
+        Vector3d diff_pl = kd.cwise() * pl_color[i] * max(0.0, i_pl_dot_n);
+        // Specular light 
+        Vector3d r_pl = -i_hat_pl + 2 * i_pl_dot_n * normal_hat;
+        Vector3d spec_pl = ks.cwise() * pl_color[i] * pow(max(0.0, r_pl.normalized().dot( Vector3d(0.0,0.0,1.0) )), sp);
+
+        pixel_color += diff_pl + spec_pl;
+        intensity += pl_color[i];
+      }
+      // Loop over directional lights
+      for( int i = 0; i < dl_color.size(); i++ ) {
+        Vector3d i_dl = dl_dir[i];
+        // Diffuse light
+        Vector3d i_hat_dl = -dl_dir[i].normalized();
+        double i_dl_dot_n = (i_hat_dl.dot( normal_hat ));
+        Vector3d diff_dl = kd.cwise() * dl_color[i] * max(0.0, i_dl_dot_n);
+        // Specular light 
+        Vector3d r_dl = -i_hat_dl + 2 * i_dl_dot_n * normal_hat;
+        Vector3d spec_dl = ks.cwise() * dl_color[i] * pow(max(0.0, r_dl.normalized().dot( Vector3d(0.0,0.0,1.0) )), sp);
+
+        pixel_color += diff_dl + spec_dl;
+        intensity += dl_color[i];
+      }
+
+      // Ambient light
+      Vector3d amb = ka.cwise() * intensity;
+
+      pixel_color += amb;
+//      cout << pixel_color(0) << ", " << pixel_color(1) << ", " << pixel_color(2) << endl;
+      // Set the pixel color
+      setPixel(x, y/2, pixel_color(0), pixel_color(1), pixel_color(2));
+
+    }
+  }
   glEnd();
 }
 //***************************************************
@@ -258,6 +312,11 @@ void myDisplay() {
   //spheres.push_back(sphere2);
   //spheres.push_back(sphere3);
   //spheres.push_back(sphere4);
+  
+  // This should be done before any other objects are shaded
+  // so that other objects go on top of it
+  shade_floor(min(viewport.w, viewport.h) / 2.5);
+
   for( int i = 0; i < spheres.size(); i++ ) {
     shaded_sphere(spheres[i].radius, spheres[i].x_offset, spheres[i].y_offset);
   }
