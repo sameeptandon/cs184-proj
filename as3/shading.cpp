@@ -317,7 +317,7 @@ void myDisplay() {
   sphere_t sphere2 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y};
   sphere_t sphere3 = {min(viewport.w, viewport.h) / 5.0, trans_x, trans_y + viewport.h/2.0};
   sphere_t sphere4 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y + viewport.h/2.0};
-  //spheres.push_back(sphere1);
+  spheres.push_back(sphere1);
   //ppheres.push_back(sphere2);
   //spheres.push_back(sphere3);
   //spheres.push_back(sphere4);
