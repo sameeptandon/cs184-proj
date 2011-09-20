@@ -1,4 +1,6 @@
-// Simple OpenGL example for CS184 F06 by Nuttapong Chentanez, modified from sample code for CS184 on Sp06
+#define BULLET 0 
+
+
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -8,7 +10,10 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include "ray_sphere_check.h"
+
+#if BULLET
 #include "bounce_sim.h"
+#endif
 
 //Using Eigen library
 USING_PART_OF_NAMESPACE_EIGEN
@@ -374,20 +379,22 @@ void processNormalKeys(unsigned char key, int x, int y) {
     }
     cout << endl; 
   }
+#if BULLET
   if (key == '>') {
 
-      vector<vector<double> > offsets;
-      step_simulation(offsets);
-      spheres.resize(0);
-      for (int  j = 0; j < offsets.size(); j++) { 
-       sphere_t sphere1 = {min(viewport.w, viewport.h) / 25, trans_x+offsets[j][0]*10, trans_y + offsets[j][1]*10 - 200};
-        spheres.push_back(sphere1);
-      }
-      glutPostRedisplay();
-      char filename[256];
-      sprintf(filename, "nom.png");
-      save_opengl_image(viewport.w, viewport.h, filename); 
+    vector<vector<double> > offsets;
+    step_simulation(offsets);
+    spheres.resize(0);
+    for (int  j = 0; j < offsets.size(); j++) { 
+      sphere_t sphere1 = {min(viewport.w, viewport.h) / 25, trans_x+offsets[j][0]*10, trans_y + offsets[j][1]*10 - 200};
+      spheres.push_back(sphere1);
+    }
+    glutPostRedisplay();
+    char filename[256];
+    sprintf(filename, "nom.png");
+    save_opengl_image(viewport.w, viewport.h, filename); 
   }
+#endif
 
 
 
@@ -510,17 +517,10 @@ int main(int argc, char *argv[]) {
 
   glutDisplayFunc(myDisplay);					// function to run when its time to draw something
   glutReshapeFunc(myReshape);					// function to run when the window gets resized
-  // glutIdleFunc(myFrameMove);			
-  //
-  /*
-     Vector3d orig = Vector3d(-5, 5.0/sqrt(2.0), 0.0);
-     Vector3d dir = Vector3d(10, 0, 0);
-     double t;
-     cout << intersect(orig, dir, t, 5) << endl; 
-     cout << t << endl; 
-     */
-
+  
+#if BULLET
   initializeBulletWorld();
+#endif
 
   glutMainLoop();							// infinite loop that will keep drawing and resizing and whatever else
 
