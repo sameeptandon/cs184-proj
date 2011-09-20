@@ -1,6 +1,5 @@
 #define BULLET 0 
 
-
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -77,6 +76,8 @@ bool toon = false;
 int toon_intervals = 1;
 // Default ground option (no ground)
 bool gnd = false;
+bool ss = false;
+bool ms = false;
 int pressed_mouse_button; // get mouse button state
 double rx = 0;
 double ry = 0;
@@ -312,16 +313,7 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
-  //spheres.clear();
-  sphere_t sphere1 = {min(viewport.w, viewport.h) / 2.5, trans_x, trans_y};
-  sphere_t sphere2 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y};
-  sphere_t sphere3 = {min(viewport.w, viewport.h) / 5.0, trans_x, trans_y + viewport.h/2.0};
-  sphere_t sphere4 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y + viewport.h/2.0};
-  spheres.push_back(sphere1);
-  //ppheres.push_back(sphere2);
-  //spheres.push_back(sphere3);
-  //spheres.push_back(sphere4);
-  
+ 
   // This should be done before any other objects are shaded
   // so that other objects go on top of it
   if( gnd ) {
@@ -332,6 +324,11 @@ void myDisplay() {
   }
   glFlush();
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
+  if( ss ) {
+    char filename[256];
+    sprintf(filename, "output.png");
+    save_opengl_image(viewport.w, viewport.h, filename);
+  }
 }
 
 //****************************************************
@@ -366,7 +363,7 @@ void myFrameMove() {
 }
 
 void usage() {
-  cout << "Usage is -ka r g b -kd r g b -ks r g b -sp v -pl x y z r g b -dl x y z r g b -toon intervals\n";
+  cout << "Usage is -ka r g b -kd r g b -ks r g b -sp v -pl x y z r g b -dl x y z r g b -toon intervals -gnd -ss -ms\n";
   exit(0);
 }
 
@@ -479,6 +476,12 @@ int main(int argc, char *argv[]) {
     else if (strcmp(argv[i], "-gnd")==0) {
       gnd = true;
     }
+    else if (strcmp(argv[i], "-ss")==0) {
+      ss = true;
+    }
+    else if (strcmp(argv[i], "-ms")==0) {
+      ms = true;
+    }
     else {
       usage();
     }
@@ -494,6 +497,22 @@ int main(int argc, char *argv[]) {
   viewport.w = 600;
   viewport.h = 600;
 
+  //spheres.clear();
+  sphere_t sphere1 = {min(viewport.w, viewport.h) / 2.5, trans_x, trans_y};
+  if(ms) {
+    trans_x = viewport.w/4.0;
+    trans_y = viewport.h/4.0;
+    sphere_t sphere2 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y};
+    sphere_t sphere3 = {min(viewport.w, viewport.h) / 5.0, trans_x, trans_y + viewport.h/2.0};
+    sphere_t sphere4 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y + viewport.h/2.0};
+    sphere_t sphere5 = {min(viewport.w, viewport.h) / 5.0, trans_x, trans_y};
+    spheres.push_back(sphere2);
+    spheres.push_back(sphere3);
+    spheres.push_back(sphere4);
+    spheres.push_back(sphere5);
+  }
+  else {
+  }
 
   trans_x = viewport.w / 2.0;
   trans_y = viewport.h / 2.0;

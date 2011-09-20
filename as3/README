@@ -1,0 +1,10 @@
+Sameep Tandon cs184-am
+Daiwei Li cs184-fz
+Platform:
+We developed our code on Ubuntu Linux 11.04 x64 and Mac OS X Lion. We've tested that it compiles and runs on cory.eecs (Solaris)
+Optional features:
+Toon shading: -toon <intervals> (# of intervals for toon shading to use, e.g. 10)
+Ground: -gnd (this shades the ground)
+Multiple spheres that shadow each other: -ms (please don't use with other options, including lighting)
+Hitting ">": Performs physics simulation (can't resize the window while doing this)
+Animation: drag mouse around, this rotates the light sources about the sphere

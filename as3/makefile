@@ -11,14 +11,14 @@ OPT   = -O3
 
 #-----------------------------------------
 # X       --------------------------------
-X_INC  =   -I/usr/X11R6/include -I/sw/include -I/usr/sww/include -I/usr/sww/pkg/Mesa/include -I/usr/include/eigen2 -I.
-X_LIB  =   -L/usr/X11R6/lib -L/sw/lib -L/usr/sww/lib -L/usr/sww/bin -L/usr/sww/pkg/Mesa/lib
+X_INC  =   -I/usr/X11R6/include -I/sw/include -I/usr/sww/include -I/usr/sww/pkg/Mesa/include -I/usr/include/eigen2 -I./
+X_LIB  =   -L/usr/X11R6/lib -L/sw/lib -L/usr/sww/lib -L/usr/sww/bin -L/usr/sww/pkg/Mesa/lib -L./
 
 #-----------------------------------------
 
 #-----------------------------------------
 # GL      --------------------------------
-GL_LIB  =   -lglut -lGLU -lGL -lX11
+GL_LIB  =   -lglut -lGLU -lGL -lX11 -lfreeimage
 
 #-----------------------------------------
 
