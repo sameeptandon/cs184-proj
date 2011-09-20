@@ -15,8 +15,8 @@ OBJECTS = shading.o
 
 #-----------------------------------------
 # Mac specific stuff
-MACINCS =  -I/opt/local/include/eigen2/
-MACLIBS = -L"/System/Library/Frameworks/OpenGL.framework/Libraries" -L"/System/Library/Frameworks/GLUT.framework" -framework GLUT -framework OpenGL -lGL -lGLU -L/usr/X11R6/lib
+MACINCS =  -I/opt/local/include/eigen2/ -I/opt/local/include/bullet
+MACLIBS = -L"/System/Library/Frameworks/OpenGL.framework/Libraries" -L"/System/Library/Frameworks/GLUT.framework" -framework GLUT -framework OpenGL -lGL -lGLU -L/usr/X11R6/lib -I/opt/local/lib/ -lBulletCollision -lBulletDynamics -lLinearMath 
 
 #-----------------------------------------
 CCOPTSMAC = $(OPTMAC) $(MACINCS) -DOSX

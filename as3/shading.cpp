@@ -8,6 +8,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include "ray_sphere_check.h"
+#include "bounce_sim.h"
 
 //Using Eigen library
 USING_PART_OF_NAMESPACE_EIGEN
@@ -303,13 +304,13 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
-  spheres.clear();
+  //spheres.clear();
   sphere_t sphere1 = {min(viewport.w, viewport.h) / 2.5, trans_x, trans_y};
   sphere_t sphere2 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y};
   sphere_t sphere3 = {min(viewport.w, viewport.h) / 5.0, trans_x, trans_y + viewport.h/2.0};
   sphere_t sphere4 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y + viewport.h/2.0};
-  spheres.push_back(sphere1);
-  //spheres.push_back(sphere2);
+  //spheres.push_back(sphere1);
+  //ppheres.push_back(sphere2);
   //spheres.push_back(sphere3);
   //spheres.push_back(sphere4);
   
@@ -370,6 +371,20 @@ void processNormalKeys(unsigned char key, int x, int y) {
     }
     cout << endl; 
   }
+  if (key == '>') {
+
+      vector<vector<double> > offsets;
+      step_simulation(offsets);
+      spheres.resize(0);
+      for (int  j = 0; j < offsets.size(); j++) { 
+       sphere_t sphere1 = {min(viewport.w, viewport.h) / 25, trans_x+offsets[j][0]*10, trans_y + offsets[j][1]*10 - 300};
+        spheres.push_back(sphere1);
+      }
+      glutPostRedisplay();
+  }
+
+
+
 }
 
 void MouseMotion(int x, int y)
@@ -496,6 +511,7 @@ int main(int argc, char *argv[]) {
      cout << t << endl; 
      */
 
+  initializeBulletWorld();
 
   glutMainLoop();							// infinite loop that will keep drawing and resizing and whatever else
 
