@@ -328,6 +328,7 @@ void myDisplay() {
     char filename[256];
     sprintf(filename, "output.png");
     save_opengl_image(viewport.w, viewport.h, filename);
+    exit(0);
   }
 }
 
