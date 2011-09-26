@@ -1,4 +1,4 @@
-#define BULLET 0 
+#define BULLET 1 
 
 #include <vector>
 #include <iostream>
@@ -237,7 +237,7 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
       setPixel(x + x_offset, y + y_offset, pixel_color(0), pixel_color(1), pixel_color(2));
     }
   }
-/*
+  /*
   for (int i = 0 ; i < pl_pos.size(); i++) {
     Vector3d lightPos = pl_pos[i]*radius;
     for (int x = 0; x < 5; x++) {
@@ -500,16 +500,14 @@ int main(int argc, char *argv[]) {
 
   //spheres.clear();
   if(ms) {
+    viewport.w = 1200;
+    viewport.h = 600;
     trans_x = viewport.w/4.0;
-    trans_y = viewport.h/4.0;
-    sphere_t sphere2 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y};
-    sphere_t sphere3 = {min(viewport.w, viewport.h) / 5.0, trans_x, trans_y + viewport.h/2.0};
-    sphere_t sphere4 = {min(viewport.w, viewport.h) / 5.0, trans_x + viewport.w/2.0, trans_y + viewport.h/2.0};
-    sphere_t sphere5 = {min(viewport.w, viewport.h) / 5.0, trans_x, trans_y};
+    trans_y = viewport.h/2.0;
+    sphere_t sphere2 = {min(viewport.w, viewport.h) / 3.0, trans_x + viewport.w/2.0, trans_y};
+    sphere_t sphere3 = {min(viewport.w, viewport.h) / 3.0, trans_x, trans_y};
     spheres.push_back(sphere2);
     spheres.push_back(sphere3);
-    spheres.push_back(sphere4);
-    spheres.push_back(sphere5);
   }
   else {
     trans_x = viewport.w / 2.0;
