@@ -191,7 +191,7 @@ void initializeBulletWorld() {
 		//create a dynamic rigidbody
 
 		//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-    int num_obj = 50;
+    int num_obj = 60;
     for (int i = 0; i < num_obj; i++) { 
 
       btCollisionShape* colShape = new btSphereShape(btScalar(2.));
@@ -226,12 +226,12 @@ void initializeBulletWorld() {
       btRigidBody* body = new btRigidBody(rbInfo);
       if (i % 2 == 0) { 
       
-        btVector3 initVel(3*drand48(), -10*drand48(), 0);
+        btVector3 initVel(10*drand48(), -10*drand48(), 0);
 
         body->setLinearVelocity(initVel);
       } else { 
 
-        btVector3 initVel(-3*drand48(), -10*drand48(), 0);
+        btVector3 initVel(-10*drand48(), -10*drand48(), 0);
 
         body->setLinearVelocity(initVel);
       }

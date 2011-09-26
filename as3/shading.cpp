@@ -1,4 +1,4 @@
-#define BULLET 0 
+#define BULLET 1 
 
 #include <vector>
 #include <iostream>
@@ -83,6 +83,7 @@ double rx = 0;
 double ry = 0;
 int last_x = 0;
 int last_y = 0;
+int fileout_count = 0;
 
 double trans_x;
 double trans_y;
@@ -163,9 +164,10 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
       // Loop over point lights
       for( int i = 0; i < pl_color.size(); i++ ) {
         bool intersection = false;
+
         double their_t;
         Vector3d i_pl = -((pl_pos[i] * radius) + Vector3d(trans_x, trans_y, 0) - Vector3d(x_offset, y_offset,0)- normal);
-
+#if 0
         for( int j = 0; j < spheres.size(); j++ ) {
           Vector3d pl_trans = ((pl_pos[i] * radius)) - Vector3d(spheres[j].x_offset, spheres[j].y_offset,0);
           if( spheres[j].radius == radius && spheres[j].x_offset == x_offset && spheres[j].y_offset == y_offset ) {
@@ -180,6 +182,7 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
           }
 
         }
+#endif
         if( !intersection ) {
           // Diffuse light
           Vector3d i_hat_pl = -i_pl.normalized();
@@ -199,7 +202,7 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
         bool intersection = false;
         double their_t;
         Vector3d i_dl = dl_dir[i];
-
+#if 0
         for( int j = 0; j < spheres.size(); j++ ) {
           Vector3d dl_pos = 2*(Vector3d(spheres[j].x_offset, spheres[j].y_offset, 0) - Vector3d(x_offset, y_offset, 0)) + normal;
 
@@ -215,6 +218,7 @@ void shaded_sphere(int radius, int x_offset, int y_offset) {
           }
 
         }
+#endif
         if( !intersection ) {
           // Diffuse light
           Vector3d i_hat_dl = -dl_dir[i].normalized();
@@ -389,7 +393,8 @@ void processNormalKeys(unsigned char key, int x, int y) {
     }
     glutPostRedisplay();
     char filename[256];
-    sprintf(filename, "nom.png");
+    sprintf(filename, "images/nom-%.4d.png", fileout_count);
+    fileout_count++;
     save_opengl_image(viewport.w, viewport.h, filename); 
   }
 #endif
