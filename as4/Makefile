@@ -55,13 +55,13 @@ clean:
 #-----------------------------------------
 #-----------------------------------------
 
-raytrace: raytrace.cpp ray.o
-	$(CC) raytrace.cpp ray.o $(LDOPTS) -o raytrace 
+raytrace: raytrace.cpp ray.o sphere.o
+	$(CC) raytrace.cpp ray.o sphere.o $(LDOPTS) -o raytrace 
 
 ray.o: ray.cpp ray.h
 	$(CC) ray.cpp -c $(CCOPTS)
 
-ray.o: sphere.cpp sphere.h shape.h
+sphere.o: sphere.cpp sphere.h shape.h
 	$(CC) sphere.cpp -c $(CCOPTS)
 
 #export LD_LIBRARY_PATH="/usr/sww/pkg/Mesa/lib:/usr/lib:/usr/sww/lib"

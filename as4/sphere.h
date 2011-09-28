@@ -7,7 +7,6 @@ class sphere : public shape {
   public:
     sphere(Vector3d, int);
     ~sphere();
-    Vector3d normal(Vector3d point);
-    bool intersect(Vector3d& ray_orig, Vector3d& ray_dir, double &t);
-    
-}
+    Vector3d normal(Vector3d);
+    bool intersect(ray&, double&);
+};

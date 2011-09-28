@@ -8,14 +8,17 @@ sphere::sphere(Vector3d center, int radius) :
  * This returns the vector from the center to the surface
  */
 Vector3d sphere::normal(Vector3d point) {
-  assert((point-_center).norm() - radius < 0.001);
+  assert((point-_center).norm() - _radius < 0.001);
   return point-_center;
 }
 
 /**
  * Adapted code from: http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection
  */
-void sphere::intersect(Vector3d& ray_orig, Vector3d &ray_dir, double &t) {
+bool sphere::intersect(ray& r, double &t) {
+  Vector3d ray_dir, ray_orig;
+  r.getDirection(ray_dir);
+  r.getDirection(ray_orig);
   //Compute A, B and C coefficients
   double a = ray_dir.dot(ray_dir);
   double b = 2 * ray_dir.dot(ray_orig);
