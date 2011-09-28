@@ -3,9 +3,6 @@
 #Machine Architecture
 MACHINE= $(shell uname -s)
 
-
-
-
 #-----------------------------------------
 # X       --------------------------------
 X_INC  =   -I/usr/X11R6/include -I/sw/include -I/usr/sww/include -I/usr/sww/pkg/Mesa/include -I/usr/include/eigen2 -I./
@@ -62,6 +59,9 @@ raytrace: raytrace.cpp ray.o
 
 ray.o: ray.cpp ray.h
 	$(CC) ray.cpp -c $(CCOPTS)
+
+ray.o: sphere.cpp sphere.h shape.h
+	$(CC) sphere.cpp -c $(CCOPTS)
 
 #export LD_LIBRARY_PATH="/usr/sww/pkg/Mesa/lib:/usr/lib:/usr/sww/lib"
 
