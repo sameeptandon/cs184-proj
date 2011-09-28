@@ -4,11 +4,16 @@
 #include <cmath>
 #include <algorithm>
 #include <cstdlib>
+#include <queue>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-
-//Using Eigen library
-USING_PART_OF_NAMESPACE_EIGEN
+#include "Sphere.h"
+#include "Shape.h"
+#include "Ray.h"
+#include "RayTracer.h"
+#include "Camera.h"
+#include "Scene.h"
+#include "Viewport.h"
 
 #ifdef OSX
 #include <OpenGL/gl.h>
@@ -22,13 +27,6 @@ USING_PART_OF_NAMESPACE_EIGEN
 #include <math.h>
 
 using namespace std;
-
-/* Helper functions */
-class Viewport;
-class Viewport {
-  public:
-    int w, h; // width and height
-};
 
 /*function headers */
 void myReshape(int w, int h);
@@ -71,11 +69,18 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
- 
+  vector<Shape*> shapes;
+  vector<Light*> lights;
+  Sphere* s1 = new Sphere(Vector3d(0.0, 0.0, -2.0), 1);
+  Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-1.0), 0); 
+  shapes.push_back(s1);
+  Scene sc = Scene(shapes, lights, 0.0);
+  Camera cam = Camera(viewport, r);
+  RayTracer rt = RayTracer(sc, cam);
+  rt.rayTrace();
   // This should be done before any other objects are shaded
   // so that other objects go on top of it
-  
-  
+ 
   glFlush();
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
 }

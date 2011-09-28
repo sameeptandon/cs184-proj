@@ -1,13 +1,13 @@
-#include "sphere.h"
+#include "Sphere.h"
 
-sphere::sphere(Vector3d center, int radius) :
+Sphere::Sphere(Vector3d center, int radius) :
   _center(center),
   _radius(radius) {};
 
 /**
  * This returns the vector from the center to the surface
  */
-Vector3d sphere::normal(Vector3d point) {
+Vector3d Sphere::normal(Vector3d point) {
   assert((point-_center).norm() - _radius < 0.001);
   return point-_center;
 }
@@ -15,13 +15,14 @@ Vector3d sphere::normal(Vector3d point) {
 /**
  * Adapted code from: http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection
  */
-bool sphere::intersect(ray& r, double &t) {
+bool Sphere::intersect(Ray& r, double &t) {
   Vector3d ray_dir, ray_orig;
   r.getDirection(ray_dir);
-  r.getDirection(ray_orig);
+  r.getOrigin(ray_orig);
+  
   //Compute A, B and C coefficients
   double a = ray_dir.dot(ray_dir);
-  double b = 2 * ray_dir.dot(ray_orig);
+  double b = 2 * ray_dir.dot(ray_orig-_center);
   double c = (ray_orig-_center).dot(ray_orig-_center) - (_radius * _radius);
 
   //Find discriminant
@@ -73,4 +74,4 @@ bool sphere::intersect(ray& r, double &t) {
 
 }
 
-sphere::~sphere() {};
+Sphere::~Sphere() {};

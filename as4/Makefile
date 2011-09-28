@@ -17,7 +17,7 @@ GL_LIB  =   -lglut -lGLU -lGL -lX11 -lfreeimage
 
 #-----------------------------------------
 #Basic Stuff -----------------------------
-CC          = g++ 
+CC          = g++ -ggdb
 cc          = gcc
 
 #-----------------------------------------
@@ -43,9 +43,9 @@ LDOPTS = $(OPT) $(INCS) $(LIBS) $(COMPILE_FLAG)
 
 #-----------------------------------------
 
-TARGETS = raytrace
+TARGETS = render
 
-OBJECTS = raytrace.o
+OBJECTS = render.o
 
 default: $(TARGETS)
 
@@ -55,14 +55,22 @@ clean:
 #-----------------------------------------
 #-----------------------------------------
 
-raytrace: raytrace.cpp ray.o sphere.o
-	$(CC) raytrace.cpp ray.o sphere.o $(LDOPTS) -o raytrace 
+render: Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o
+	$(CC) Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o $(LDOPTS) -o render
 
-ray.o: ray.cpp ray.h
-	$(CC) ray.cpp -c $(CCOPTS)
+Ray.o: Ray.cpp Ray.h
+	$(CC) Ray.cpp -c $(CCOPTS)
 
-sphere.o: sphere.cpp sphere.h shape.h
-	$(CC) sphere.cpp -c $(CCOPTS)
+Sphere.o: Sphere.cpp Sphere.h Shape.h
+	$(CC) Sphere.cpp -c $(CCOPTS)
 
+Camera.o: Camera.cpp Camera.h
+	$(CC) Camera.cpp -c $(CCOPTS)
+
+RayTracer.o: RayTracer.cpp RayTracer.h
+	$(CC) RayTracer.cpp -c $(CCOPTS)
+
+Scene.o: Scene.cpp Scene.h
+	$(CC) Scene.cpp -c $(CCOPTS)
 #export LD_LIBRARY_PATH="/usr/sww/pkg/Mesa/lib:/usr/lib:/usr/sww/lib"
 
