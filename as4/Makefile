@@ -32,14 +32,15 @@ OPT   = -O3
 ifeq ($(MACHINE),Darwin)
 	LIBS = -L"/System/Library/Frameworks/OpenGL.framework/Libraries" -L"/System/Library/Frameworks/GLUT.framework" -framework GLUT -framework OpenGL -lGL -lGLU -L/usr/X11R6/lib
 	INCS = -I/usr/local/include/ -I/usr/include/ -I/opt/local/include/eigen2/ -I/opt/local/include/ 
+	COMPILE_FLAG = -DOSX
 else
 	LIBS = $(X_LIB) $(GL_LIB)
 	INCS = $(X_INC)
 endif
 
 
-CCOPTS = $(OPT) $(INCS)
-LDOPTS = $(OPT) $(INCS) $(LIBS)
+CCOPTS = $(OPT) $(INCS) $(COMPILE_FLAG)
+LDOPTS = $(OPT) $(INCS) $(LIBS) $(COMPILE_FLAG)
 
 #-----------------------------------------
 

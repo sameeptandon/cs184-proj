@@ -1,2 +1,5 @@
 Sameep Tandon - cs184-am
 Daiwei Li - cs184-fz
+
+Our ray-sphere intersection code is adapted from
+http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection
