@@ -1,13 +1,10 @@
 #!gmake 
 
-#-----------------------------------------
-#Basic Stuff -----------------------------
-CC          = g++ 
-cc          = gcc
+#Machine Architecture
+MACHINE= $(shell uname -s)
 
-#-----------------------------------------
-#Optimization ----------------------------
-OPT   = -O3 
+
+
 
 #-----------------------------------------
 # X       --------------------------------
@@ -20,22 +17,37 @@ X_LIB  =   -L/usr/X11R6/lib -L/sw/lib -L/usr/sww/lib -L/usr/sww/bin -L/usr/sww/p
 # GL      --------------------------------
 GL_LIB  =   -lglut -lGLU -lGL -lX11 -lfreeimage 
 
-#-----------------------------------------
-
-TARGETS = raytrace
-
-OBJECTS = raytrace.o
 
 #-----------------------------------------
+#Basic Stuff -----------------------------
+CC          = g++ 
+cc          = gcc
 
-LIBS = $(X_LIB) $(GL_LIB)
-INCS = $(X_INC)
+#-----------------------------------------
+
+#Optimization ----------------------------
+OPT   = -O3 
+#-----------------------------------------
+
+ifeq ($(MACHINE),Darwin)
+	LIBS = -L"/System/Library/Frameworks/OpenGL.framework/Libraries" -L"/System/Library/Frameworks/GLUT.framework" -framework GLUT -framework OpenGL -lGL -lGLU -L/usr/X11R6/lib
+	INCS = -I/usr/local/include/ -I/usr/include/ -I/opt/local/include/eigen2/ -I/opt/local/include/ 
+else
+	LIBS = $(X_LIB) $(GL_LIB)
+	INCS = $(X_INC)
+endif
+
 
 CCOPTS = $(OPT) $(INCS)
 LDOPTS = $(OPT) $(INCS) $(LIBS)
 
 #-----------------------------------------
+
 #-----------------------------------------
+
+TARGETS = raytrace
+
+OBJECTS = raytrace.o
 
 default: $(TARGETS)
 
@@ -46,7 +58,7 @@ clean:
 #-----------------------------------------
 
 raytrace: raytrace.cpp ray.o
-	$(CC) ray.o $(LDOPTS) -o raytrace 
+	$(CC) raytrace.cpp ray.o $(LDOPTS) -o raytrace 
 
 ray.o: ray.cpp ray.h
 	$(CC) ray.cpp -c $(CCOPTS)
