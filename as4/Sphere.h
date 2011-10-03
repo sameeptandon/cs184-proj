@@ -5,9 +5,9 @@
 class Sphere : public Shape {
   protected:
     Vector3d _center;
-    int _radius;
+    double _radius;
   public:
-    Sphere(Vector3d, Vector3d, Vector3d, Vector3d, double, Vector3d, int);
+    Sphere(Vector3d, Vector3d, Vector3d, Vector3d, double, Vector3d, double);
     ~Sphere();
     Vector3d normal(Vector3d);
     bool intersect(Ray&, double&);

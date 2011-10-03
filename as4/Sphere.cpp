@@ -1,6 +1,6 @@
 #include "Sphere.h"
 
-Sphere::Sphere(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp, Vector3d center, int radius) :
+Sphere::Sphere(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp, Vector3d center, double radius) :
   _center(center),
   _radius(radius) {
   
