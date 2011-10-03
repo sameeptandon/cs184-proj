@@ -88,7 +88,8 @@ void myDisplay() {
   point_lights.push_back(l1);
 
   vector<DirectionalLight*> directional_lights;
-
+  DirectionalLight* l1 = new DirectionalLight(Vector3d(1.0, 0.0, 0.0), Vector3d(1.0, 1.0, 1.0));
+  directional_lights.push_back(l1);
 
   Scene sc = Scene(shapes, point_lights, directional_lights);
   Camera cam = Camera(viewport, r);

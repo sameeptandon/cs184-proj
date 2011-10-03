@@ -59,7 +59,31 @@ void RayTracer::rayTrace() {
         pixel_color += diff_pl + spec_pl;
         intensity += pl_color;
       }
+      for( int i = 0; i < dl.size(); i++ ) {
 
+        Vector3d i_dl;
+        dl[i]->getDirection(i_dl);
+
+        Vector3d dl_color;
+        dl[i]->getIntensity(dl_color);
+
+        // Diffuse light
+        Vector3d i_hat_dl = -i_dl.normalized();
+        double i_dl_dot_n = (i_hat_dl.dot( normal_hat ));
+        Vector3d diff_dl = kd.cwise() * dl_color * max(0.0, i_dl_dot_n);
+        // Specular light 
+        Vector3d r_dl = -i_hat_dl + 2 * i_dl_dot_n * normal_hat;
+        Vector3d spec_dl = ks.cwise() * dl_color * pow(max(0.0, r_dl.normalized().dot( -point )), sp);
+
+        pixel_color += diff_dl + spec_dl;
+        intensity += dl_color;
+      }
+
+      // Ambient light
+      Vector3d amb = ka.cwise() * intensity;
+
+      pixel_color += amb;
+ 
 
 
     setPixel(pix(0), pix(1), pixel_color(0), pixel_color(1), pixel_color(2));
