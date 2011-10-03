@@ -1,10 +1,10 @@
 #include "Scene.h"
 #include <cfloat>
 
-Scene::Scene(vector<Shape*>& shapes, vector<Light*>& lights, double sp) :
+Scene::Scene(vector<Shape*>& shapes, vector<PointLight*>& points_lights, vector<DirectionalLight*> directional_lights, double sp) :
   _shapes(shapes),
-  _lights(lights),
-  _sp(sp) {};
+  _point_lights(points_lights),
+  _directional_lights(directional_lights) {};
 
 bool Scene::intersect(Ray& ray, double& t, Shape** shape) {
   bool intersect = false;
