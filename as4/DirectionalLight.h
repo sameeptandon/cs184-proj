@@ -2,7 +2,7 @@
 #define _DIRECTIONALLIGHT_H
 #include "Light.h"
 
-class DirectionalLight {
+class DirectionalLight : public Light{
   protected:
     Vector3d _direction;
   public:

@@ -11,11 +11,58 @@ void RayTracer::rayTrace() {
   Vector2d pix;
   Vector3d a,b;
   glBegin(GL_POINTS);
+  vector<PointLight*> pl;
+  vector<DirectionalLight*> dl; 
+
+  _scene.getPointLights(pl);
+  _scene.getDirectionalLights(dl);
+
   while(_camera.generateSample(r)) {
     if(_scene.intersect(r, t, &s)) {
       r.getPixel(pix);
+      Vector3d ray_orig, ray_dir;
+      r.getOrigin(ray_orig);
+      r.getDirection(ray_dir);
+      Vector3d point = ray_orig + t * ray_dir;
+      Vector3d normal = s->normal(point);
+      Vector3d normal_hat = normal.normalized();
+      Vector3d kd, ks, ka, km;
+      double sp;
+      s->getKd(kd);
+      s->getKs(ks);
+      s->getKa(ka);
+      s->getKm(km);
+      s->getSp(sp);
+
+      Vector3d intensity = Vector3d::Zero();
+      Vector3d pixel_color = Vector3d::Zero();
       // Do Phong shading here
-      setPixel(pix(0), pix(1), 255, 0.0, 0.0);
+      // Loop over point lights
+      for( int i = 0; i < pl.size(); i++ ) {
+
+        Vector3d pl_pos;
+        pl[i]->getPosition(pl_pos);
+
+        Vector3d pl_color;
+        pl[i]->getIntensity(pl_color);
+
+        Vector3d i_pl = pl_pos - point; 
+
+        // Diffuse light
+        Vector3d i_hat_pl = -i_pl.normalized();
+        double i_pl_dot_n = (i_hat_pl.dot( normal_hat ));
+        Vector3d diff_pl = kd.cwise() * pl_color * max(0.0, i_pl_dot_n);
+        // Specular light 
+        Vector3d r_pl = -i_hat_pl + 2 * i_pl_dot_n * normal_hat;
+        Vector3d spec_pl = ks.cwise() * pl_color * pow(max(0.0, r_pl.normalized().dot( Vector3d(0.0,0.0,1.0) )), sp);
+
+        pixel_color += diff_pl + spec_pl;
+        intensity += pl_color;
+      }
+
+    setPixel(pix(0), pix(1), pixel_color(0), pixel_color(1), pixel_color(2));
+
+
     }
   }
   glEnd();

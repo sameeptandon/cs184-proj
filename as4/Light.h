@@ -1,5 +1,8 @@
 #ifndef _LIGHT_H
 #define _LIGHT_H
+
+#include "Globals.h"
+
 class Light {
   protected:
     Vector3d _intensity;

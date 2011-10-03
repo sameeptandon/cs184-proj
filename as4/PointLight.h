@@ -1,8 +1,9 @@
 #ifndef _POINTLIGHT_H
 #define _POINTLIGHT_H
+
 #include "Light.h"
 
-class PointLight {
+class PointLight : public Light {
   protected:
     Vector3d _position;
   public:

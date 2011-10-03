@@ -7,13 +7,13 @@
 
 class Shape {
   protected:
-    double _ka, _ks, _kd, _km;
+    Vector3d _ka, _ks, _kd, _km;
   public:
-    inline Vector3d normal(Vector3d point) {assert(false); return Vector3d();}
-    virtual bool intersect(Ray&, double&) {assert(false); return false;}
     inline void getKa(Vector3d& ka) {ka = _ka;}
     inline void getKs(Vector3d& ks) {ks = _ks;}
     inline void getKd(Vector3d& kd) {kd = _kd;}
     inline void getKm(Vector3d& km) {km = _km;}
+    virtual Vector3d normal(Vector3d point) = 0;
+    virtual bool intersect(Ray&, double&) = 0;
 };
 #endif //_SHAPE_H

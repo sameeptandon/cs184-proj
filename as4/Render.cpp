@@ -70,11 +70,18 @@ void myDisplay() {
   glLoadIdentity();							// make sure transformation is "zero'd"
 
   vector<Shape*> shapes;
-  vector<Light*> lights;
   Sphere* s1 = new Sphere(Vector3d(0.0, 0.0, -2.0), 1);
   Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-1.0), 0); 
   shapes.push_back(s1);
-  Scene sc = Scene(shapes, lights, 0.0);
+
+  vector<PointLight*> point_lights;
+  PointLight* l1 = new PointLight(Vector3d(0.0,-2.0,-2.0), Vector3d(1.0, 1.0, 1.0));
+  point_lights.push_back(l1);
+
+  vector<DirectionalLight*> directional_lights;
+
+
+  Scene sc = Scene(shapes, point_lights, directional_lights);
   Camera cam = Camera(viewport, r);
   RayTracer rt = RayTracer(sc, cam);
   rt.rayTrace();
