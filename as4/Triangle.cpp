@@ -1,16 +1,21 @@
-#include "triangle.h"
+#include "Triangle.h"
 
-triangle::triangle(Vector3d a, Vector3d b, Vector3d) :
+Triangle::Triangle(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp, Vector3d a, Vector3d b, Vector3d) :
+  _ka(ka),
+  _kd(kd),
+  _ks(ks),
+  _km(km),
+  _sp(sp),
   _a(a),
   _b(b),
   _c(c) {};
 
-triangle::~triangle() {};
+Triangle::~Triangle() {};
 
-Vector3d triangle::normal(Vector3d point) {
+Vector3d Triangle::normal(Vector3d& point) {
   return NULL;
 }
 
-triangle::intersect(Vector3d& ray_orig, Vector3d& ray_dir, double &t) {
+Triangle::intersect(Vector3d& ray_orig, Vector3d& ray_dir, double &t) {
   return false;
 }
