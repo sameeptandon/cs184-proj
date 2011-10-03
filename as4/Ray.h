@@ -18,4 +18,5 @@ class Ray {
     Vector3d _origin, _direction;
     int _depth;
 };
+
 #endif //_RAY_H

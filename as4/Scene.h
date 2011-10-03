@@ -21,6 +21,7 @@ class Scene {
   public:
     Scene(vector<Shape*>&, vector<PointLight*>&, vector<DirectionalLight*>);
     bool intersect(Ray&, double&, Shape**);
+    bool intersect(Ray&, double&, Shape**, Shape*);
     //inline void getLights(vector<Light*>& lights) {lights = _lights;}
     inline void getPointLights(vector<PointLight*>& point_lights) {point_lights = _point_lights;}
     inline void getDirectionalLights(vector<DirectionalLight*>& directional_lights) {directional_lights = _directional_lights;}
