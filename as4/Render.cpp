@@ -69,13 +69,20 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
+  Vector3d ka = Vector3d(0.0, 0.0, 0.1);
+  Vector3d kd = Vector3d(0.2, 0.5, 0.2);
+  Vector3d ks = Vector3d(0.2, 0.4, 0.6);
+  Vector3d km = Vector3d(0.1, 0.1, 0.1);
+  double sp = 20;
+
   vector<Shape*> shapes;
-  Sphere* s1 = new Sphere(Vector3d(0.0, 0.0, -2.0), 1);
+
+  Sphere* s1 = new Sphere(ka, kd, ks, km, sp, Vector3d(0.0, 0.0, -2.0), 1);
   Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-1.0), 0); 
   shapes.push_back(s1);
 
   vector<PointLight*> point_lights;
-  PointLight* l1 = new PointLight(Vector3d(0.0,-2.0,-2.0), Vector3d(1.0, 1.0, 1.0));
+  PointLight* l1 = new PointLight(Vector3d(0.0,0.0,2.0), Vector3d(1.0, 1.0, 1.0));
   point_lights.push_back(l1);
 
   vector<DirectionalLight*> directional_lights;

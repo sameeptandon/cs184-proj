@@ -1,13 +1,16 @@
 #include "Sphere.h"
 
 Sphere::Sphere(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp, Vector3d center, int radius) :
-  _ka(ka),
-  _kd(kd),
-  _ks(ks),
-  _km(km),
-  _sp(sp),
   _center(center),
-  _radius(radius) {};
+  _radius(radius) {
+  
+  _ka = ka;
+  _kd = kd;
+  _ks = ks;
+  _km = km;
+  _sp = sp;
+  
+  };
 
 /**
  * This returns the vector from the center to the surface

@@ -14,7 +14,7 @@ class Shape {
     inline void getKs(Vector3d& ks) {ks = _ks;}
     inline void getKd(Vector3d& kd) {kd = _kd;}
     inline void getKm(Vector3d& km) {km = _km;}
-    inline double getSp() {return _sp;}
+    inline void getSp(double& sp) {sp = _sp;}
     virtual Vector3d normal(Vector3d point) = 0;
     virtual bool intersect(Ray&, double&) = 0;
 };

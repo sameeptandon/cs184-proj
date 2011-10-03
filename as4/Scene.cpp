@@ -1,7 +1,7 @@
 #include "Scene.h"
 #include <cfloat>
 
-Scene::Scene(vector<Shape*>& shapes, vector<PointLight*>& points_lights, vector<DirectionalLight*> directional_lights, double sp) :
+Scene::Scene(vector<Shape*>& shapes, vector<PointLight*>& points_lights, vector<DirectionalLight*> directional_lights) :
   _shapes(shapes),
   _point_lights(points_lights),
   _directional_lights(directional_lights) {};
