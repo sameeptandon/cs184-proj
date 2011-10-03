@@ -2,20 +2,20 @@
 
 Sphere::Sphere(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp, Vector3d center, double radius) :
   _center(center),
-  _radius(radius) {
-  
+  _radius(radius) 
+{
   _ka = ka;
   _kd = kd;
   _ks = ks;
   _km = km;
   _sp = sp;
-  
-  };
+};
 
 /**
  * This returns the vector from the center to the surface
  */
 Vector3d Sphere::normal(Vector3d point) {
+  std::cout << (point-_center).norm() - _radius << std::endl;
   assert((point-_center).norm() - _radius < 0.001);
   return point-_center;
 }

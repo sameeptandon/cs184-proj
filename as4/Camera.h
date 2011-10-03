@@ -26,7 +26,8 @@ class Camera {
     int _x, _y;
   public:
     Camera(Viewport&, Ray&);
-    bool generateSample(Ray&); 
+    bool generateSample(Ray&);
+    inline void getViewport(Viewport &viewport) {viewport = _viewport;}
 };
 
 #endif //_CAMERA_H

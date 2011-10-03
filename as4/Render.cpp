@@ -116,7 +116,7 @@ void myDisplay() {
   Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-3.0), 0); 
   Camera cam = Camera(viewport, r);
   RayTracer rt = RayTracer(sc, cam);
-  rt.rayTrace();
+  rt.generateRays();
   // This should be done before any other objects are shaded
   // so that other objects go on top of it
  
