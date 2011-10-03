@@ -1,6 +1,6 @@
 #include "RayTracer.h"
 
-#define MAX_DEPTH 3
+#define MAX_DEPTH 5
 
 RayTracer::RayTracer(Scene &scene, Camera &camera ) :
   _scene(scene),
@@ -56,9 +56,9 @@ void RayTracer::traceRay(Ray &r) {
       // for ambient term
       intensity += pl_color;
 
-      Ray r_light(Vector2d::Zero(), point, (pl_pos-point).normalized(), 1);
+      Ray r_light(Vector2d::Zero(), point, (pl_pos-point).normalized(), 1, s);
       Shape *tmp;
-      if (_scene.intersect(r_light,t,&tmp,s)) continue;
+      if (_scene.intersect(r_light,t,&tmp)) continue;
       Vector3d i_pl = (pl_pos - point); 
 
       // Diffuse light
@@ -68,7 +68,7 @@ void RayTracer::traceRay(Ray &r) {
 
       // Specular light 
       Vector3d r_pl = -i_hat_pl + 2 * i_pl_dot_n * normal_hat;
-      Vector3d spec_pl = ks.cwise() * pl_color * pow(max(0.0, r_pl.normalized().dot( -point.normalized() )), sp);
+      Vector3d spec_pl = ks.cwise() * pl_color * pow(max(0.0, r_pl.normalized().dot( (ray_orig-point).normalized() )), sp);
 
       pixel_color += diff_pl + spec_pl;
     } // for (point lights)
@@ -85,9 +85,9 @@ void RayTracer::traceRay(Ray &r) {
       // for ambient term
       intensity += dl_color;
 
-      Ray r_light(Vector2d::Zero(), point, -i_dl.normalized(), 1);
+      Ray r_light(Vector2d::Zero(), point, -i_dl.normalized(), 1, s);
       Shape *tmp;
-      if (_scene.intersect(r_light,t,&tmp,s)) continue;
+      if (_scene.intersect(r_light,t,&tmp)) continue;
 
       // Diffuse light
       Vector3d i_hat_dl = -i_dl.normalized();
@@ -96,15 +96,16 @@ void RayTracer::traceRay(Ray &r) {
 
       // Specular light 
       Vector3d r_dl = -i_hat_dl + 2 * i_dl_dot_n * normal_hat;
-      Vector3d spec_dl = ks.cwise() * dl_color * pow(max(0.0, r_dl.normalized().dot( -point.normalized() )), sp);
+      Vector3d spec_dl = ks.cwise() * dl_color * pow(max(0.0, r_dl.normalized().dot( (ray_orig-point).normalized() )), sp);
 
       pixel_color += diff_dl + spec_dl;
     } // for (directional lights)
 
     // Ambient light
-    Vector3d amb = ka.cwise() * intensity;
-
-    pixel_color += amb;
+    //if (r.getDepth() == 0) {
+      Vector3d amb = ka.cwise() * intensity;
+      pixel_color += amb;
+    //}
       
     Vector3d r_scale;
     r.getScale(r_scale);
@@ -114,9 +115,9 @@ void RayTracer::traceRay(Ray &r) {
       Vector3d ray_dir_hat = -ray_dir.normalized();
       double ray_dir_dot_n = ray_dir_hat.dot(normal_hat);  
       Vector3d reflect_dir = -ray_dir_hat + 2 * ray_dir_dot_n * normal_hat;
-      cout << "Pixel: " << pix.transpose() << " Reflecting ray origin: " << point.transpose() << " direction: " << reflect_dir.transpose() << " normal: " << normal_hat.transpose() << endl;
-      exit(0);
-      Ray reflect_ray = Ray(pix, point, reflect_dir, r.getDepth() + 1, km.cwise() * r_scale);
+      //cout << "Pixel: " << pix.transpose() << " Reflecting ray origin: " << point.transpose() << " direction: " << reflect_dir.transpose() << " normal: " << normal_hat.transpose() << endl;
+      //exit(0);
+      Ray reflect_ray = Ray(pix, point, reflect_dir, r.getDepth() + 1, km.cwise() * r_scale, s);
       rayQueue.push(reflect_ray);
     }
 #endif

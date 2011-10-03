@@ -71,46 +71,82 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
-  Vector3d ka = Vector3d(0.0, 0.0, 0.1);
-  Vector3d kd = Vector3d(0.2, 0.5, 0.2);
-  Vector3d ks = Vector3d(0.2, 0.4, 0.6);
-  Vector3d km = Vector3d(0.1, 0.1, 0.1);
-  double sp = 20;
+  double sp = 50;
 
   vector<Shape*> shapes;
-
-
+  vector<PointLight*> point_lights;
+  vector<DirectionalLight*> directional_lights;
+  
   Sphere* s1 = new Sphere(
+      Vector3d(0.1,0.1,0.1), // ka 
+      Vector3d(1.0, 0.0, 0.0), // kd
+      Vector3d(1.0, 1.0, 1.0), // ks
+      Vector3d(0.9, 0.9, 0.9), // km
+      sp, Vector3d(0.0, 0.0, -17.0), 2.0);
+  Sphere* s2 = new Sphere(
+      Vector3d(0.1, 0.1, 0.1), // ka 
+      Vector3d(0.0, 1.0, 0.0), // kd
+      Vector3d(1.0, 1.0, 1.0), // ks
+      Vector3d(0.9, 0.9, 0.9), // km
+      sp, Vector3d(0.0, 4.0, -17.0), 1.5);
+  Sphere* s3 = new Sphere(
+      Vector3d(0.1, 0.1, 0.1), // ka 
+      Vector3d(0.0, 0.0, 1.0), // kd
+      Vector3d(1.0, 1.0, 1.0), // ks
+      Vector3d(0.9, 0.9, 0.9), // km
+      sp, Vector3d(0.0, -4.0, -17.0), 1.5);
+  Sphere* s4 = new Sphere(
+      Vector3d(0.1, 0.1, 0.1), // ka 
+      Vector3d(1.0, 1.0, 0.0), // kd
+      Vector3d(1.0, 1.0, 1.0), // ks
+      Vector3d(0.9, 0.9, 0.9), // km
+      sp, Vector3d(4.0, 0.0, -17.0), 1.5);
+  Sphere* s5 = new Sphere(
+      Vector3d(0.1, 0.1, 0.1), // ka 
+      Vector3d(0.0, 1.0, 1.0), // kd
+      Vector3d(1.0, 1.0, 1.0), // ks
+      Vector3d(0.9, 0.9, 0.9), // km
+      sp, Vector3d(-4.0, 0.0, -17.0), 1.5);
+  shapes.push_back(s1);
+  shapes.push_back(s2);
+  shapes.push_back(s3);
+  shapes.push_back(s4);
+  shapes.push_back(s5);
+
+  DirectionalLight* dl1 = new DirectionalLight(Vector3d(1.0, -1.0, -1.0), Vector3d(1.0, 1.0, 1.0));
+  DirectionalLight* dl2 = new DirectionalLight(Vector3d(-1.0, 1.0, 1.0), Vector3d(1.0, 1.0, 1.0));
+  directional_lights.push_back(dl1);
+  directional_lights.push_back(dl2);
+  /*Sphere* s1 = new Sphere(
       Vector3d(0.1,0.1,0.1), // ka 
       Vector3d(1.0, 0.0, 1.0), // kd
       Vector3d(1.0, 1.0, 1.0), // ks
-      Vector3d(0.0, 0.0, 0.0), // km
+      Vector3d(0.9, 0.9, 0.9), // km
       sp, Vector3d(0.0, 0.0, -20.0), 3.0);
   Sphere* s2 = new Sphere(
       Vector3d(0.1,0.1,0.1), // ka 
       Vector3d(1.0, 1.0, 0.0), // kd
       Vector3d(1.0, 1.0, 1.0), // ks
-      Vector3d(0.0, 0.0, 0.0), // km
+      Vector3d(0.9, 0.9, 0.9), // km
       sp, Vector3d(-2.0, 2.0, -15.0), 1.0);
   Sphere* s3 = new Sphere(
       Vector3d(0.1,0.1,0.1), // ka 
       Vector3d(0.0, 1.0, 1.0), // kd
       Vector3d(1.0, 1.0, 1.0), // ks
-      Vector3d(0.0, 0.0, 0.0), // km
+      Vector3d(0.9, 0.9, 0.9), // km
       sp, Vector3d(-2.0, -2.0, -15.0), 1.0);
   shapes.push_back(s1);
   shapes.push_back(s2);
   shapes.push_back(s3);
 
-  vector<PointLight*> point_lights;
   //PointLight* pl1 = new PointLight(Vector3d(0.2,0.0,0.2), Vector3d(1.0, 1.0, 1.0));
   //point_lights.push_back(pl1);
 
-  vector<DirectionalLight*> directional_lights;
   DirectionalLight* dl1 = new DirectionalLight(Vector3d(1.0, -1.0, -1.0), Vector3d(1.0, 1.0, 1.0));
   DirectionalLight* dl2 = new DirectionalLight(Vector3d(1.0, 1.0, -1.0), Vector3d(0.0, 0.0, 1.0));
   directional_lights.push_back(dl1);
   directional_lights.push_back(dl2);
+  */
 
   Scene sc = Scene(shapes, point_lights, directional_lights);
   Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-3.0), 0); 
@@ -184,8 +220,8 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
   // Initalize theviewport size
-  viewport.w = 600;
-  viewport.h = 600;
+  viewport.w = 1000;
+  viewport.h = 1000;
 
   //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);

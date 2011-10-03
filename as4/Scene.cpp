@@ -7,8 +7,9 @@ Scene::Scene(vector<Shape*>& shapes, vector<PointLight*>& points_lights, vector<
   _directional_lights(directional_lights) {};
 
 
-bool Scene::intersect(Ray& ray, double& t, Shape** shape, Shape* ignore) {
+bool Scene::intersect(Ray& ray, double& t, Shape** shape) {
 
+  Shape* ignore = ray.getIgnoreShape();
   bool intersect = false;
   t = DBL_MAX;
 
@@ -24,8 +25,4 @@ bool Scene::intersect(Ray& ray, double& t, Shape** shape, Shape* ignore) {
   }
   return intersect;
 
-}
-
-bool Scene::intersect(Ray& ray, double& t, Shape** shape) {
-  return intersect(ray, t, shape, NULL);
 }
