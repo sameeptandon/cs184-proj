@@ -251,15 +251,15 @@ void myDisplay() {
   //PointLight* pl1 = new PointLight(Vector3d(0.0,0.0,-0.0), Vector3d(1.0, 1.0, 1.0));
   //point_lights.push_back(pl1);
 
-  DirectionalLight* dl1 = new DirectionalLight(Vector3d(1.0, -1.0, -1.0), Vector3d(1.0, 1.0, 1.0));
+  /*DirectionalLight* dl1 = new DirectionalLight(Vector3d(1.0, -1.0, -1.0), Vector3d(1.0, 1.0, 1.0));
   DirectionalLight* dl2 = new DirectionalLight(Vector3d(-1.0, -1.0, -1.0), Vector3d(1.0, 0.0, 0.0));
   directional_lights.push_back(dl1);
   directional_lights.push_back(dl2);
-  
-  //DirectionalLight* dl1 = new DirectionalLight(Vector3d(1.0, -1.0, -1.0), Vector3d(1.0, 1.0, 1.0));
-  //DirectionalLight* dl2 = new DirectionalLight(Vector3d(1.0, 1.0, -1.0), Vector3d(0.0, 0.0, 1.0));
-  //directional_lights.push_back(dl1);
-  //directional_lights.push_back(dl2);
+  */
+  DirectionalLight* dl1 = new DirectionalLight(Vector3d(1.0, -1.0, -1.0), Vector3d(1.0, 1.0, 1.0));
+  DirectionalLight* dl2 = new DirectionalLight(Vector3d(-1.0, 1.0, 1.0), Vector3d(1.0, 1.0, 1.0));
+  directional_lights.push_back(dl1);
+  directional_lights.push_back(dl2);
 
   Scene sc = Scene(shapes, point_lights, directional_lights);
   Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-3.0), 0); 
@@ -333,8 +333,8 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
   // Initalize theviewport size
-  viewport.w = 600;
-  viewport.h = 600;
+  viewport.w = 1000;
+  viewport.h = 1000;
 
   //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);
