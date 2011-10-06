@@ -1,5 +1,5 @@
 #include "Triangle.h"
-#define INTERSECTION_EPS 0.0000001
+#define INTERSECTION_EPS 0.0000000001
 
 
 Triangle::Triangle(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp, Vector3d a, Vector3d b, Vector3d c) :
@@ -14,9 +14,9 @@ Triangle::Triangle(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp
   _sp = sp;
 
   //precompute normal 
-  _normal = (_c-_a).cross(_c-_b);
-  if(_normal[2] > 0.0) // We want normal to face the camera (at origin)
-    _normal = -_normal;
+  _normal = (_b-_a).cross(_c-_a);
+  //if(_normal[2] > 0.0) // We want normal to face the camera (at origin)
+  //  _normal = -_normal;
   
   };
 
@@ -52,6 +52,8 @@ bool Triangle::intersect(Ray& r, double &t) {
   double v = ray_direction.dot(qvec) * inv_det;
   if ( v < 0.0 || (u+v) > 1.0) return false;  
   t = edge2.dot(qvec) * inv_det;
+  
+  if (t < 0) return false; 
 
   return intersect;
 

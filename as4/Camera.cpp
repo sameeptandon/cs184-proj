@@ -7,7 +7,7 @@ Camera::Camera(Viewport &viewport, Ray &loc) :
   _y(0) {};
 
 bool Camera::generateSample(Ray &r) {
-  if( _x == _viewport.w && _y == _viewport.h-1 ) {
+  if( _x == _viewport.w - 1 && _y == _viewport.h-1 ) {
     _x = 0;
     _y = 0;
     return false;
@@ -20,7 +20,7 @@ bool Camera::generateSample(Ray &r) {
   r = Ray(Vector2d(_x,_y), origin, dir, 0); 
 
   _x++;
-  if( _x > _viewport.w ) {
+  if( _x > _viewport.w - 1 ) {
     _x = 0;
     _y++;
   }

@@ -122,23 +122,23 @@ void myDisplay() {
   */
   Sphere* s1 = new Sphere(
       Vector3d(0.1,0.1,0.1), // ka 
-      Vector3d(1.0, 0.0, 1.0), // kd
+      Vector3d(1.0, 0.0, 0.0), // kd
       Vector3d(1.0, 1.0, 1.0), // ks
-      Vector3d(0.0, 0.0, 0.0), // km
+      Vector3d(0.1, 0.1, 0.1), // km
       sp, Vector3d(0.0, 0.0, -20.0), 3.0);
   Sphere* s2 = new Sphere(
       Vector3d(0.1,0.1,0.1), // ka 
       Vector3d(1.0, 1.0, 0.0), // kd
       Vector3d(1.0, 1.0, 1.0), // ks
       Vector3d(0.0, 0.0, 0.0), // km
-      sp, Vector3d(-2.0, 2.0, -15.0), 1.0);
+      sp, Vector3d(2.0, -2.0, -15.0), 1.0);
   Sphere* s3 = new Sphere(
       Vector3d(0.1,0.1,0.1), // ka 
       Vector3d(0.0, 1.0, 1.0), // kd
       Vector3d(1.0, 1.0, 1.0), // ks
       Vector3d(0.0, 0.0, 0.0), // km
       sp, Vector3d(-2.0, -2.0, -15.0), 1.0);
-  Triangle* t1 = new Triangle(
+  Triangle* t3 = new Triangle(
       Vector3d(0.1, 0.1, 0.1), // ka
       Vector3d(0.1, 0.1, 0.1), // kd
       Vector3d(1.0, 1.0, 1.0), // ks
@@ -148,21 +148,47 @@ void myDisplay() {
       Vector3d(1.0, 4.0, -20.0), //v2
       Vector3d(6.0, -1.0, -20.0)  //v3
       );
+  Triangle* t1 = new Triangle(
+      Vector3d(0.1, 0.1, 0.1), // ka
+      Vector3d(0.1, 0.1, 0.1), // kd
+      Vector3d(1.0, 1.0, 1.0), // ks
+      Vector3d(1.0, 1.0, 1.0), // km
+      sp, 
+      Vector3d(15.0, -3.0, -30.0), //v1 
+      Vector3d(-15.0, -3.0, -30.0), //v2
+      Vector3d(-15.0, -3.0, -5.0)  //v3
+      );
+  Triangle* t2 = new Triangle(
+      Vector3d(0.1, 0.1, 0.1), // ka
+      Vector3d(0.1, 0.1, 0.1), // kd
+      Vector3d(1.0, 1.0, 1.0), // ks
+      Vector3d(1.0, 1.0, 1.0), // km
+      sp, 
+      Vector3d(15.0, -3.0, -5.0), //v2
+      Vector3d(15.0, -3.0, -30.0), //v1 
+      Vector3d(-15.0, -3.0, -5.0)  //v3
+      );
   shapes.push_back(s1);
   shapes.push_back(s2);
   shapes.push_back(s3);
   shapes.push_back(t1);
-
-  //PointLight* pl1 = new PointLight(Vector3d(0.2,0.0,0.2), Vector3d(1.0, 1.0, 1.0));
+  shapes.push_back(t2);
+  shapes.push_back(t3);
+  //PointLight* pl1 = new PointLight(Vector3d(0.0,0.0,-0.0), Vector3d(1.0, 1.0, 1.0));
   //point_lights.push_back(pl1);
 
   DirectionalLight* dl1 = new DirectionalLight(Vector3d(1.0, -1.0, -1.0), Vector3d(1.0, 1.0, 1.0));
-  DirectionalLight* dl2 = new DirectionalLight(Vector3d(1.0, 1.0, -1.0), Vector3d(0.0, 0.0, 1.0));
+  DirectionalLight* dl2 = new DirectionalLight(Vector3d(-1.0, -1.0, -1.0), Vector3d(1.0, 0.0, 0.0));
   directional_lights.push_back(dl1);
   directional_lights.push_back(dl2);
+  
+  //DirectionalLight* dl1 = new DirectionalLight(Vector3d(1.0, -1.0, -1.0), Vector3d(1.0, 1.0, 1.0));
+  //DirectionalLight* dl2 = new DirectionalLight(Vector3d(1.0, 1.0, -1.0), Vector3d(0.0, 0.0, 1.0));
+  //directional_lights.push_back(dl1);
+  //directional_lights.push_back(dl2);
 
   Scene sc = Scene(shapes, point_lights, directional_lights);
-  Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-3.0), 0); 
+  Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-2.0), 0); 
   Camera cam = Camera(viewport, r);
   RayTracer rt = RayTracer(sc, cam);
   rt.generateRays();
