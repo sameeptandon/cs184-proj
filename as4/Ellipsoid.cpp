@@ -29,12 +29,11 @@ Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double 
   _km = km;
   _sp = sp;
   // Calculate _M and _M_inverse
-  Matrix3d rot; 
-  rotation_from_euler_angles(rot, rotation(0), rotation(1), rotation(2));
+  rotation_from_euler_angles(_rot, rotation(0), rotation(1), rotation(2));
   _M << scale(0), 0, 0,
      0, scale(1), 0,
      0, 0, scale(2);
-  _M = rot * _M;
+  _M = _rot * _M;
   _M_inverse = _M.inverse();
 };
 
@@ -43,8 +42,11 @@ Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double 
  */
 Vector3d Ellipsoid::normal(Vector3d point) {
   //std::cout << (point-_center).norm() - _radius << std::endl;
-  assert((point-_translation).norm() - _scale.norm() < 0.001);
-  return point-_translation;
+  //assert((point-_translation).norm() - _scale.norm() < 0.001);
+  Vector3d unit_normal = _M_inverse * (point-_translation);
+  assert(unit_normal.norm() - 1.0 < 0.001);
+  Vector3d inverted_scale = Vector3d(1.0/_scale(0),1.0/_scale(1),1.0/_scale(2));
+  return _rot*(inverted_scale.cwise()*unit_normal);
 }
 
 bool Ellipsoid::intersect(Ray& r, double &t) {
