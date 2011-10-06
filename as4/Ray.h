@@ -2,6 +2,7 @@
 #define _RAY_H
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include "Globals.h"
 
 USING_PART_OF_NAMESPACE_EIGEN
 

@@ -1,6 +1,6 @@
 #include "RayTracer.h"
 
-#define MAX_DEPTH 5
+#define MAX_DEPTH 1
 
 RayTracer::RayTracer(Scene &scene, Camera &camera ) :
   _scene(scene),
@@ -122,7 +122,11 @@ void RayTracer::traceRay(Ray &r) {
     }
 #endif
 
+    //cout << pixel_color.transpose() << endl;
+    //cout << r_scale.transpose() << endl;
+    //cout << pix.transpose() << endl;
     pixel_colors[pix(0)][pix(1)] += r_scale.cwise() * pixel_color;
+    //cout << "done set" << endl;
   }
 }
 

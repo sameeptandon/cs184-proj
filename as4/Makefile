@@ -55,8 +55,8 @@ clean:
 #-----------------------------------------
 #-----------------------------------------
 
-render: Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o
-	$(CC) Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o $(LDOPTS) -o render
+render: Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o
+	$(CC) Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o $(LDOPTS) -o render
 
 PointLight.o: PointLight.cpp PointLight.h
 	$(CC) PointLight.cpp -c $(CCOPTS)
@@ -66,6 +66,9 @@ DirectionalLight.o: DirectionalLight.cpp DirectionalLight.h
 
 Ray.o: Ray.cpp Ray.h
 	$(CC) Ray.cpp -c $(CCOPTS)
+
+Triangle.o: Triangle.cpp Triangle.h Shape.h
+	$(CC) Triangle.cpp -c $(CCOPTS)
 
 Sphere.o: Sphere.cpp Sphere.h Shape.h
 	$(CC) Sphere.cpp -c $(CCOPTS)
