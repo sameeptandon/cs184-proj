@@ -7,6 +7,7 @@ class Sphere : public Shape {
     Vector3d _center;
     double _radius;
   public:
+    Sphere() {};
     Sphere(Vector3d, Vector3d, Vector3d, Vector3d, double, Vector3d, double);
     ~Sphere();
     Vector3d normal(Vector3d);

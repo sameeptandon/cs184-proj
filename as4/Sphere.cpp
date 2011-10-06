@@ -42,7 +42,7 @@ bool Sphere::intersect(Ray& r, double &t) {
     return false;
 
   // compute q as described above
-  double distSqrt = sqrtf(disc);
+  double distSqrt = sqrt(disc);
   double q;
   if (b < 0)
     q = (-b - distSqrt)/2.0;

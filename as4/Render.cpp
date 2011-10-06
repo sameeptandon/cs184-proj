@@ -9,6 +9,7 @@
 #include <Eigen/Geometry>
 #include "Sphere.h"
 #include "Triangle.h"
+#include "Ellipsoid.h"
 #include "Shape.h"
 #include "Ray.h"
 #include "RayTracer.h"
@@ -120,12 +121,25 @@ void myDisplay() {
   directional_lights.push_back(dl1);
   directional_lights.push_back(dl2);
   */
+  /*
+
   Sphere* s1 = new Sphere(
       Vector3d(0.1,0.1,0.1), // ka 
       Vector3d(1.0, 0.0, 0.0), // kd
       Vector3d(1.0, 1.0, 1.0), // ks
       Vector3d(0.1, 0.1, 0.1), // km
       sp, Vector3d(0.0, 0.0, -20.0), 3.0);
+  Ellipsoid* s1 = new Ellipsoid(
+      Vector3d(0.1,0.1,0.1), // ka 
+      Vector3d(1.0, 0.0, 0.0), // kd
+      Vector3d(1.0, 1.0, 1.0), // ks
+      Vector3d(0.1, 0.1, 0.1), // km
+      sp, 
+      Vector3d(5.0, 4.0, 3.0), //scale
+      Vector3d(0.0, 0.0, -20.0), //translation
+      Vector3d(0.0, -M_PI/4.0, 0.0) //rotation
+      );
+ 
   Sphere* s2 = new Sphere(
       Vector3d(0.1,0.1,0.1), // ka 
       Vector3d(1.0, 1.0, 0.0), // kd
@@ -174,6 +188,66 @@ void myDisplay() {
   shapes.push_back(t1);
   shapes.push_back(t2);
   shapes.push_back(t3);
+  */
+
+  Ellipsoid* e1 = new Ellipsoid(
+      Vector3d(0.1, 0.1, 0.1), //ka
+      Vector3d(1.0, 0.0, 0.0), //kd
+      Vector3d(1.0, 1.0, 1.0), //ks
+      Vector3d(0.9, 0.9, 0.9), //km
+      sp, //sp
+      Vector3d(4.0, 2.0, 2.0), //scale
+      Vector3d(0.0, 0.0, -17.0), //translation
+      Vector3d(0.0, 0.0, 0.0) //rotation
+      );
+
+  Ellipsoid* e2 = new Ellipsoid(
+      Vector3d(0.1, 0.1, 0.1), //ka
+      Vector3d(0.0, 1.0, 0.0), //kd
+      Vector3d(1.0, 1.0, 1.0), //ks
+      Vector3d(0.9, 0.9, 0.9), //km
+      sp, //sp
+      Vector3d(0.5, 1.5, 1.0), //scale
+      Vector3d(-2.0, 4.0, -17.0), //translation
+      Vector3d(-M_PI/4.0, -M_PI/4.0, 0.0) //rotation
+      );
+  Ellipsoid* e3 = new Ellipsoid(
+      Vector3d(0.1, 0.1, 0.1), //ka
+      Vector3d(0.0, 0.0, 1.0), //kd
+      Vector3d(1.0, 1.0, 1.0), //ks
+      Vector3d(0.9, 0.9, 0.9), //km
+      sp, //sp
+      Vector3d(0.5, 1.5, 1.0), //scale
+      Vector3d(-2.0, -4.0, -17.0), //translation
+      Vector3d(M_PI/4.0, -M_PI/4.0, 0.0) //rotation
+      );
+  Ellipsoid* e4 = new Ellipsoid(
+      Vector3d(0.1, 0.1, 0.1), //ka
+      Vector3d(1.0, 1.0, 0.0), //kd
+      Vector3d(1.0, 1.0, 1.0), //ks
+      Vector3d(0.9, 0.9, 0.9), //km
+      sp, //sp
+      Vector3d(0.5, 1.5, 1.0), //scale
+      Vector3d(2.0, 4.0, -17.0), //translation
+      Vector3d(-3.0*M_PI/4.0, M_PI/4.0, 0.0) //rotation
+      );
+  Ellipsoid* e5 = new Ellipsoid(
+      Vector3d(0.1, 0.1, 0.1), //ka
+      Vector3d(0.0, 1.0, 1.0), //kd
+      Vector3d(1.0, 1.0, 1.0), //ks
+      Vector3d(0.9, 0.9, 0.9), //km
+      sp, //sp
+      Vector3d(0.5, 1.5, 1.0), //scale
+      Vector3d(2.0, -4.0, -17.0), //translation
+      Vector3d(3.0*M_PI/4.0, M_PI/4.0, 0.0) //rotation
+      );
+
+  shapes.push_back(e1);
+  shapes.push_back(e2);
+  shapes.push_back(e3);
+  shapes.push_back(e4);
+  shapes.push_back(e5);
+ 
   //PointLight* pl1 = new PointLight(Vector3d(0.0,0.0,-0.0), Vector3d(1.0, 1.0, 1.0));
   //point_lights.push_back(pl1);
 
@@ -188,7 +262,7 @@ void myDisplay() {
   //directional_lights.push_back(dl2);
 
   Scene sc = Scene(shapes, point_lights, directional_lights);
-  Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-2.0), 0); 
+  Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-3.0), 0); 
   Camera cam = Camera(viewport, r);
   RayTracer rt = RayTracer(sc, cam);
   rt.generateRays();
@@ -259,8 +333,8 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
   // Initalize theviewport size
-  viewport.w = 1000;
-  viewport.h = 1000;
+  viewport.w = 600;
+  viewport.h = 600;
 
   //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);

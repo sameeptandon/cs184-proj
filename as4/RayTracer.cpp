@@ -1,6 +1,6 @@
 #include "RayTracer.h"
 
-#define MAX_DEPTH 0
+#define MAX_DEPTH 4
 
 RayTracer::RayTracer(Scene &scene, Camera &camera ) :
   _scene(scene),
