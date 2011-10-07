@@ -2,7 +2,6 @@
 
 void save_opengl_image(int width, int height, char* filename)
 {
-
   // Make the BYTE array, factor of 3 because it's RBG.
   BYTE* pixels = new BYTE[ 3 * width * height];
   glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, pixels);

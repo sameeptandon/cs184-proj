@@ -101,14 +101,15 @@ void RayTracer::traceRay(Ray &r) {
       pixel_color += diff_dl + spec_dl;
     } // for (directional lights)
 
-    // Ambient light
-    //if (r.getDepth() == 0) {
-      Vector3d amb = ka.cwise() * intensity;
-      pixel_color += amb;
-    //}
-      
     Vector3d r_scale;
     r.getScale(r_scale);
+
+    // Ambient light
+    //if (r.getDepth() == 0) {
+    Vector3d amb = ka.cwise() * intensity;
+    pixel_color += amb;
+    //}
+      
 #if 1
     // Add reflection ray to queue
     if( r.getDepth() < MAX_DEPTH ) {
@@ -125,7 +126,7 @@ void RayTracer::traceRay(Ray &r) {
     //cout << pixel_color.transpose() << endl;
     //cout << r_scale.transpose() << endl;
     //cout << pix.transpose() << endl;
-    pixel_colors[pix(0)][pix(1)] += r_scale.cwise() * pixel_color;
+    pixel_colors[pix(0)][pix(1)] += (r_scale.cwise() * pixel_color);
     //cout << "done set" << endl;
   }
 }
