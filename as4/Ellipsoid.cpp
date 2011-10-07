@@ -1,19 +1,28 @@
 #include "Ellipsoid.h"
 
-void rotation_from_euler_angles(Matrix3d& rotation, double angZ, double angY, double angX)
+/*void rotation_from_euler_angles(Matrix3d& rotation, double angZ, double angY, double angX)
 {
   Matrix3d rot1(Eigen::AngleAxisd(angZ, Vector3d::UnitZ()));
   Vector3d axis2 = rot1*(Vector3d::UnitY());
   Matrix3d rot2 = Eigen::AngleAxisd(angY, axis2)*rot1;
   Vector3d axis3 = rot2*(Vector3d::UnitX());
   rotation = Eigen::AngleAxisd(angX, axis3)*rot2;
-}
+}*/
 
+void rotation_from_euler_angles(Matrix3d& rotation, double angZ, double angY, double angX)
+{
+  Matrix3d rot1(Eigen::AngleAxisd(angX, Vector3d::UnitX()));
+  Vector3d axis2 = rot1*(Vector3d::UnitY());
+  Matrix3d rot2 = Eigen::AngleAxisd(angY, axis2)*rot1;
+  Vector3d axis3 = rot2*(Vector3d::UnitZ());
+  rotation = Eigen::AngleAxisd(angZ, axis3)*rot2;
+}
 void euler_angles_from_rotation(const Matrix3d& rotation, double& angZ, double& angY, double& angX)
 {
-  angZ = atan2(rotation(1,0), rotation(0,0));
+ /* angZ = atan2(rotation(1,0), rotation(0,0));
   angY = atan2(-rotation(2,0), sqrt(rotation(2,1)*rotation(2,1) + rotation(2,2)*rotation(2,2)));
   angX = atan2(rotation(2,1), rotation(2,2));
+  */
 }
 
 Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp, Vector3d scale, Vector3d translation, Vector3d rotation) :
@@ -29,12 +38,17 @@ Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double 
   _km = km;
   _sp = sp;
   // Calculate _M and _M_inverse
-  rotation_from_euler_angles(_rot, rotation(0), rotation(1), rotation(2));
-  _M << scale(0), 0, 0,
-     0, scale(1), 0,
-     0, 0, scale(2);
-  _M = _rot * _M;
-  _M_inverse = _M.inverse();
+  //rotation_from_euler_angles(_M_rot, rotation(0), rotation(1), rotation(2));
+  rotation_from_euler_angles(_M_rot, rotation(0), rotation(1), rotation(2));
+  _M_scale = Matrix3d::Zero();
+  for (int i = 0; i < 3; i++) { 
+    _M_scale(i,i) = _scale(i);
+  }
+  _M = _M_rot * _M_scale;
+
+  _M_scale_inv = _M_scale.inverse();
+  _M_rot_inv = _M_rot.inverse();
+  _M_inv = _M.inverse();
 };
 
 /**
@@ -43,10 +57,9 @@ Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double 
 Vector3d Ellipsoid::normal(Vector3d point) {
   //std::cout << (point-_center).norm() - _radius << std::endl;
   //assert((point-_translation).norm() - _scale.norm() < 0.001);
-  Vector3d unit_normal = _M_inverse * (point-_translation);
+  Vector3d unit_normal = _M_inv * (point-_translation);
   assert(unit_normal.norm() - 1.0 < 0.001);
-  Vector3d inverted_scale = Vector3d(1.0/_scale(0),1.0/_scale(1),1.0/_scale(2));
-  return _rot*(inverted_scale.cwise()*unit_normal);
+  return _M_rot*_M_scale_inv*unit_normal;
 }
 
 bool Ellipsoid::intersect(Ray& r, double &t) {
@@ -54,8 +67,8 @@ bool Ellipsoid::intersect(Ray& r, double &t) {
   Vector3d ray_dir_unit_sphere, ray_orig_unit_sphere;
   r.getDirection(ray_dir);
   r.getOrigin(ray_orig);
-  ray_dir_unit_sphere = _M_inverse * ray_dir;
-  ray_orig_unit_sphere = _M_inverse * (ray_orig - _translation);
+  ray_dir_unit_sphere = _M_inv * (ray_dir);
+  ray_orig_unit_sphere = _M_inv * (ray_orig - _translation);
   //Ray r_unit_sphere = Ray(Vector2d(0,0), ray_dir_unit_sphere, ray_orig_unit_sphere, 0);
   /*
    * cout << ray_dir.transpose() << endl;

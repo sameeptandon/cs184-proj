@@ -9,8 +9,8 @@ class Ellipsoid : public Sphere {
     // Rotation: about x,y,z axes
     Vector3d _scale, _translation, _rotation;
     // M is R * S
-    Matrix3d _M, _rot;
-    Matrix3d _M_inverse;
+    Matrix3d _M, _M_scale, _M_rot;
+    Matrix3d _M_inv, _M_scale_inv, _M_rot_inv;
     Sphere _sphere;
   public:
     Ellipsoid(Vector3d, Vector3d, Vector3d, Vector3d, double, Vector3d, Vector3d, Vector3d);
