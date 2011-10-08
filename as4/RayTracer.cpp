@@ -162,19 +162,21 @@ void RayTracer::generateRays() {
     rayQueue.pop();
   }
   
-  glBegin(GL_POINTS);
-  for( int i = 0; i < v.w; i++ ) {
-    for( int j = 0; j < v.h; j++ ) {
-      Vector3d rgb = pixel_colors[i][j];
-      setPixel(i, j, rgb(0), rgb(1), rgb(2));
-    }
-  }
-  glEnd();
- 
   if( _writefile ) {
-    save_opengl_image(v.w, v.h, _filename);
+    save_opengl_image(v.w, v.h, _filename, pixel_colors);
     exit(0);
-  } 
+  }  
+  else {
+    glBegin(GL_POINTS);
+    for( int i = 0; i < v.w; i++ ) {
+      for( int j = 0; j < v.h; j++ ) {
+        Vector3d rgb = pixel_colors[i][j];
+        setPixel(i, j, rgb(0), rgb(1), rgb(2));
+      }
+    }
+    glEnd();
+  }
+
 }
 
 void RayTracer::setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
