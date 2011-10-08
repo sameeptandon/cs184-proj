@@ -34,7 +34,10 @@ using namespace std;
 
 // Global variables
 enum filetype_t {ELLIPSOID, OBJ, LIGHT};
-int ex = 2;
+int depth = 0;
+int aasamples = 1;
+int ex = 1;
+Ray camr = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-3.0), 0); 
 vector<Shape*> shapes;
 vector<PointLight*> point_lights;
 vector<DirectionalLight*> directional_lights;
@@ -270,12 +273,9 @@ void myDisplay() {
   directional_lights.push_back(dl1);
   directional_lights.push_back(dl2);
   */
-  cout << directional_lights.size() << endl;
-  cout << shapes.size() << endl;
   Scene sc = Scene(shapes, point_lights, directional_lights);
-  Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-3.0), 0); 
-  Camera cam = Camera(viewport, r, 1);
-  RayTracer rt = RayTracer(sc, cam);
+  Camera cam = Camera(viewport, camr, aasamples);
+  RayTracer rt = RayTracer(sc, cam, depth);
   rt.generateRays();
   // This should be done before any other objects are shaded
   // so that other objects go on top of it
@@ -345,9 +345,6 @@ void parseObj(ifstream &is, char c) {
     break;
     case 'f':
       is >> i1 >> i2 >> i3;
-      cout << vertices[i1].transpose() << endl;
-      cout << vertices[i2].transpose() << endl;
-      cout << vertices[i3].transpose() << endl;
       shapes.push_back(new Triangle(
             Vector3d(0.1, 0.1, 0.1),
             Vector3d(1.0, 0, 0),
@@ -428,30 +425,32 @@ int main(int argc, char *argv[]) {
       filetype_t type = OBJ;
       parseScene(argv[i+1], type);
       i += 1;
-      ex = 4;
     }
-    else if (strcmp(argv[i], "-e")==0 && i + 1 < argc) {
+    else if (strcmp(argv[i], "-ell")==0 && i + 1 < argc) {
       filetype_t type = ELLIPSOID;
       parseScene(argv[i+1], type);
       i += 1;
-      ex = 4;
     }
     else if (strcmp(argv[i], "-l")==0 && i + 1 < argc) {
       filetype_t type = LIGHT;
       parseScene(argv[i+1], type);
       i += 1;
-      ex = 4;
     }
-    /*e    else if (strcmp(argv[i], "-o")==0) {
-      strncpy(argv[i+1], 
-      ss = true;
+    else if (strcmp(argv[i], "-aa")==0 && i + 1 < argc) {
+      aasamples = atoi(argv[i+1]);
+      i =+ 1;
     }
-    else if (strcmp(argv[i], "-ms")==0) {
-      ms = true;
+    else if (strcmp(argv[i], "-ref")==0 && i + 1 < argc) {
+      depth = atoi(argv[i+1]);
+      i =+ 1;
+    }
+    else if (strcmp(argv[i], "-cam")==0 && i + 6 < argc) {
+      camr = Ray(Vector2d(0,0), Vector3d(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3])), Vector3d(atof(argv[i+4]), atof(argv[i+5]), atof(argv[i+6])), 0);
+      i += 6;
     }
     else {
       usage();
-    }*/
+    }
   }
 
   //This initializes glut

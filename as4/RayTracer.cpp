@@ -1,10 +1,9 @@
 #include "RayTracer.h"
 
-#define MAX_DEPTH 5
-
-RayTracer::RayTracer(Scene &scene, Camera &camera ) :
+RayTracer::RayTracer(Scene &scene, Camera &camera, int depth ) :
   _scene(scene),
-  _camera(camera) 
+  _camera(camera),
+  _max_depth(depth)
 {
   _scene.getPointLights(pl);
   _scene.getDirectionalLights(dl);
@@ -112,7 +111,7 @@ void RayTracer::traceRay(Ray &r) {
       
 #if 1
     // Add reflection ray to queue
-    if( r.getDepth() < MAX_DEPTH ) {
+    if( r.getDepth() < _max_depth ) {
       Vector3d ray_dir_hat = -ray_dir.normalized();
       double ray_dir_dot_n = ray_dir_hat.dot(normal_hat);  
       Vector3d reflect_dir = -ray_dir_hat + 2 * ray_dir_dot_n * normal_hat;

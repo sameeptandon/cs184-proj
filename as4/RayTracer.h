@@ -16,10 +16,11 @@ class RayTracer {
     vector<PointLight*> pl;
     vector<DirectionalLight*> dl; 
     Viewport v;
+    int _max_depth;
 
     void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b);
   public:
-    RayTracer(Scene &scene, Camera &camera);
+    RayTracer(Scene &scene, Camera &camera, int depth);
     void generateRays();
     void traceRay(Ray&);
 
