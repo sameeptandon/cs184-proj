@@ -1,9 +1,12 @@
 #include "RayTracer.h"
+#include "ImageWriter.h"
 
-RayTracer::RayTracer(Scene &scene, Camera &camera, int depth ) :
+RayTracer::RayTracer(Scene &scene, Camera &camera, int depth, bool writefile, char* filename ) :
   _scene(scene),
   _camera(camera),
-  _max_depth(depth)
+  _max_depth(depth),
+  _writefile(writefile),
+  _filename(filename)
 {
   _scene.getPointLights(pl);
   _scene.getDirectionalLights(dl);
@@ -16,6 +19,7 @@ RayTracer::RayTracer(Scene &scene, Camera &camera, int depth ) :
     }
     pixel_colors.push_back(vec);
   }
+
 };
 
 void RayTracer::traceRay(Ray &r) {
@@ -133,6 +137,7 @@ void RayTracer::traceRay(Ray &r) {
 void RayTracer::generateRays() {
   Ray r;
 
+  cout << "Generating rays to trace..." << endl;
   while(_camera.generateSample(r)) {
     Vector3d ray_dir, ray_origin;
     r.getDirection(ray_dir);
@@ -141,6 +146,7 @@ void RayTracer::generateRays() {
     rayQueue.push(r);
   }
 
+  cout << "Tracing rays..." << endl;
   while(!rayQueue.empty()) {
     r = rayQueue.front();
     traceRay(r);
@@ -155,6 +161,11 @@ void RayTracer::generateRays() {
     }
   }
   glEnd();
+ 
+  if( _writefile ) {
+    save_opengl_image(v.w, v.h, _filename);
+    exit(0);
+  } 
 }
 
 void RayTracer::setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {

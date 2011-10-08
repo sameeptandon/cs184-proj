@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include <vector>
 #include <queue>
+#include <string>
 
 class RayTracer {
   private:
@@ -17,10 +18,12 @@ class RayTracer {
     vector<DirectionalLight*> dl; 
     Viewport v;
     int _max_depth;
+    bool _writefile;
+    char *_filename;
 
     void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b);
   public:
-    RayTracer(Scene &scene, Camera &camera, int depth);
+    RayTracer(Scene &scene, Camera &camera, int depth, bool writefile, char* filename);
     void generateRays();
     void traceRay(Ray&);
 

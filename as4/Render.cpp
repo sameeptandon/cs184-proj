@@ -18,7 +18,6 @@
 #include "Viewport.h"
 #include "ImageWriter.h"
 
-
 #ifdef OSX
 #include <OpenGL/gl.h>
 #include <GLUT/glut.h>
@@ -37,6 +36,9 @@ enum filetype_t {ELLIPSOID, OBJ, LIGHT};
 int depth = 0;
 int aasamples = 1;
 int ex = 1;
+bool writefile = false;
+char outputfile[255];
+
 Ray camr = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-3.0), 0); 
 vector<Shape*> shapes;
 vector<PointLight*> point_lights;
@@ -275,7 +277,7 @@ void myDisplay() {
   */
   Scene sc = Scene(shapes, point_lights, directional_lights);
   Camera cam = Camera(viewport, camr, aasamples);
-  RayTracer rt = RayTracer(sc, cam, depth);
+  RayTracer rt = RayTracer(sc, cam, depth, writefile, outputfile);
   rt.generateRays();
   // This should be done before any other objects are shaded
   // so that other objects go on top of it
@@ -417,35 +419,52 @@ int main(int argc, char *argv[]) {
   // Read command line arguments
   int i = 0;
   while(++i != argc) {
+    // Examples
     if (strcmp(argv[i], "-ex")==0 && i + 1 < argc) {
       ex = atoi(argv[i+1]);
       i += 1;
     }
+    // .obj file
     else if (strcmp(argv[i], "-obj")==0 && i + 1 < argc) {
       filetype_t type = OBJ;
       parseScene(argv[i+1], type);
       i += 1;
     }
+    // ellipsoid file
     else if (strcmp(argv[i], "-ell")==0 && i + 1 < argc) {
       filetype_t type = ELLIPSOID;
       parseScene(argv[i+1], type);
       i += 1;
     }
+    // lights file
     else if (strcmp(argv[i], "-l")==0 && i + 1 < argc) {
       filetype_t type = LIGHT;
       parseScene(argv[i+1], type);
       i += 1;
     }
+    // output file
+    else if (strcmp(argv[i], "-o")==0 && i + 1 < argc) {
+      strncpy(outputfile, argv[i+1], 255);
+      outputfile[255] = '\0';
+      cout << outputfile << endl;
+      writefile = true;
+      i += 1;
+    }
+    // anti-aliasing
     else if (strcmp(argv[i], "-aa")==0 && i + 1 < argc) {
       aasamples = atoi(argv[i+1]);
-      i =+ 1;
+      i += 1;
     }
+    // reflection depth
     else if (strcmp(argv[i], "-ref")==0 && i + 1 < argc) {
       depth = atoi(argv[i+1]);
-      i =+ 1;
+      i += 1;
     }
+    // camera location
     else if (strcmp(argv[i], "-cam")==0 && i + 6 < argc) {
-      camr = Ray(Vector2d(0,0), Vector3d(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3])), Vector3d(atof(argv[i+4]), atof(argv[i+5]), atof(argv[i+6])), 0);
+      camr = Ray(Vector2d(0,0),
+          Vector3d(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3])),
+          Vector3d(atof(argv[i+4]), atof(argv[i+5]), atof(argv[i+6])), 0);
       i += 6;
     }
     else {
@@ -464,19 +483,22 @@ int main(int argc, char *argv[]) {
   viewport.h = 1000;
 
   //The size and position of the window
-  glutInitWindowSize(viewport.w, viewport.h);
-  glutInitWindowPosition(0,0);
-  glutCreateWindow(argv[0]);
+  if( !writefile ) {
+    glutInitWindowSize(viewport.w, viewport.h);
+    glutInitWindowPosition(0,0);
+    glutCreateWindow(argv[0]);
+    //Exit on spacebar
+    glutKeyboardFunc(processNormalKeys);
 
-  //Exit on spacebar
-  glutKeyboardFunc(processNormalKeys);
+    initScene();							// quick function to set up scene
 
-  initScene();							// quick function to set up scene
+    glutDisplayFunc(myDisplay);					// function to run when its time to draw something
+    glutReshapeFunc(myReshape);					// function to run when the window gets resized
 
-  glutDisplayFunc(myDisplay);					// function to run when its time to draw something
-  glutReshapeFunc(myReshape);					// function to run when the window gets resized
-  
-  glutMainLoop();							// infinite loop that will keep drawing and resizing and whatever else
-
+    glutMainLoop();							// infinite loop that will keep drawing and resizing and whatever else
+  }
+  else {
+    myDisplay();
+  }
   return 0; //happy time
 }

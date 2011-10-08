@@ -1,3 +1,5 @@
+#ifdef _IMAGEWRITER_H
+#define _IMAGEWRITER_H
 #include <freeimage.h>
 
 void save_opengl_image(int width, int height, char* filename)
@@ -12,4 +14,4 @@ void save_opengl_image(int width, int height, char* filename)
   delete image;
   delete pixels;
 } 
-
+#endif //_IMAGEWRITER_H
