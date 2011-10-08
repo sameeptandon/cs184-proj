@@ -12,7 +12,7 @@ X_LIB  =   -L/usr/X11R6/lib -L/sw/lib -L/usr/sww/lib -L/usr/sww/bin -L/usr/sww/p
 
 #-----------------------------------------
 # GL      --------------------------------
-GL_LIB  =   -lglut -lGLU -lGL -lX11 -lfreeimage 
+GL_LIB  =   -lglut -lGLU -lGL -lX11 -lfreeimage
 
 
 #-----------------------------------------
@@ -55,8 +55,8 @@ clean:
 #-----------------------------------------
 #-----------------------------------------
 
-render: Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o
-	$(CC) Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o $(LDOPTS) -o render
+render: Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o Box.o Shape.o
+	$(CC) Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o Box.o Shape.o $(LDOPTS)-o render
 
 PointLight.o: PointLight.cpp PointLight.h
 	$(CC) PointLight.cpp -c $(CCOPTS)
@@ -66,6 +66,9 @@ DirectionalLight.o: DirectionalLight.cpp DirectionalLight.h
 
 Ray.o: Ray.cpp Ray.h
 	$(CC) Ray.cpp -c $(CCOPTS)
+
+Shape.o: Shape.h
+	$(CC) Shape.cpp -c $(CCOPTS)
 
 Triangle.o: Triangle.cpp Triangle.h Shape.h
 	$(CC) Triangle.cpp -c $(CCOPTS)
@@ -84,5 +87,8 @@ RayTracer.o: RayTracer.cpp RayTracer.h
 
 Scene.o: Scene.cpp Scene.h
 	$(CC) Scene.cpp -c $(CCOPTS)
+
+Box.o: Box.cpp Box.h Ray.h
+	$(CC) Box.cpp -c $(CCOPTS)
 #export LD_LIBRARY_PATH="/usr/sww/pkg/Mesa/lib:/usr/lib:/usr/sww/lib"
 

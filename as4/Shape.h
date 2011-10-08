@@ -4,11 +4,14 @@
  *  Description:  Basic shape abstract class, defines the methods that shapes will have
 */
 #include "Ray.h"
+#include "Box.h"
 
 class Shape {
   protected:
     Vector3d _ka, _ks, _kd, _km;
     double _sp;
+    Box _bb;
+    bool bbIntersect(Ray&);
   public:
     inline void getKa(Vector3d& ka) {ka = _ka;}
     inline void getKs(Vector3d& ks) {ks = _ks;}

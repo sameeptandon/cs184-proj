@@ -38,7 +38,6 @@ Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double 
   _km = km;
   _sp = sp;
   // Calculate _M and _M_inverse
-  //rotation_from_euler_angles(_M_rot, rotation(0), rotation(1), rotation(2));
   rotation_from_euler_angles(_M_rot, rotation(0), rotation(1), rotation(2));
   _M_scale = Matrix3d::Zero();
   for (int i = 0; i < 3; i++) { 
@@ -49,6 +48,8 @@ Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double 
   _M_scale_inv = _M_scale.inverse();
   _M_rot_inv = _M_rot.inverse();
   _M_inv = _M.inverse();
+  // Calculate bounding box
+  _bb = Box( translation - scale, translation + scale );
 };
 
 /**
@@ -63,70 +64,75 @@ Vector3d Ellipsoid::normal(Vector3d point) {
 }
 
 bool Ellipsoid::intersect(Ray& r, double &t) {
-  Vector3d ray_dir, ray_orig;
-  Vector3d ray_dir_unit_sphere, ray_orig_unit_sphere;
-  r.getDirection(ray_dir);
-  r.getOrigin(ray_orig);
-  ray_dir_unit_sphere = _M_inv * (ray_dir);
-  ray_orig_unit_sphere = _M_inv * (ray_orig - _translation);
-  //Ray r_unit_sphere = Ray(Vector2d(0,0), ray_dir_unit_sphere, ray_orig_unit_sphere, 0);
-  /*
-   * cout << ray_dir.transpose() << endl;
-  cout << ray_dir_unit_sphere.transpose() << endl;
-  cout << ray_orig.transpose() << endl;
-  cout << ray_orig_unit_sphere.transpose() << endl;
-  exit(0);
-*/
-  //Compute A, B and C coefficients
-  double a = ray_dir_unit_sphere.dot(ray_dir_unit_sphere);
-  double b = 2 * ray_dir_unit_sphere.dot(ray_orig_unit_sphere-_center);
-  double c = (ray_orig_unit_sphere-_center).dot(ray_orig_unit_sphere-_center) - (_radius * _radius);
+  if( bbIntersect(r) ) {
+    Vector3d ray_dir, ray_orig;
+    Vector3d ray_dir_unit_sphere, ray_orig_unit_sphere;
+    r.getDirection(ray_dir);
+    r.getOrigin(ray_orig);
+    ray_dir_unit_sphere = _M_inv * (ray_dir);
+    ray_orig_unit_sphere = _M_inv * (ray_orig - _translation);
+    //Ray r_unit_sphere = Ray(Vector2d(0,0), ray_dir_unit_sphere, ray_orig_unit_sphere, 0);
+    /*
+     * cout << ray_dir.transpose() << endl;
+     cout << ray_dir_unit_sphere.transpose() << endl;
+     cout << ray_orig.transpose() << endl;
+     cout << ray_orig_unit_sphere.transpose() << endl;
+     exit(0);
+     */
+    //Compute A, B and C coefficients
+    double a = ray_dir_unit_sphere.dot(ray_dir_unit_sphere);
+    double b = 2 * ray_dir_unit_sphere.dot(ray_orig_unit_sphere-_center);
+    double c = (ray_orig_unit_sphere-_center).dot(ray_orig_unit_sphere-_center) - (_radius * _radius);
 
-  //Find discriminant
-  double disc = b * b - 4 * a * c;
+    //Find discriminant
+    double disc = b * b - 4 * a * c;
 
-  // if discriminant is negative there are no real roots, so return 
-  // false as ray misses sphere
-  if (disc < 0)
-    return false;
+    // if discriminant is negative there are no real roots, so return 
+    // false as ray misses sphere
+    if (disc < 0)
+      return false;
 
-  // compute q as described above
-  double distSqrt = sqrt(disc);
-  double q;
-  if (b < 0)
-    q = (-b - distSqrt)/2.0;
-  else
-    q = (-b + distSqrt)/2.0;
+    // compute q as described above
+    double distSqrt = sqrt(disc);
+    double q;
+    if (b < 0)
+      q = (-b - distSqrt)/2.0;
+    else
+      q = (-b + distSqrt)/2.0;
 
-  // compute t0 and t1
-  double t0 = q / a;
-  double t1 = c / q;
+    // compute t0 and t1
+    double t0 = q / a;
+    double t1 = c / q;
 
-  // make sure t0 is smaller than t1
-  if (t0 > t1)
-  {
-    // if t0 is bigger than t1 swap them around
-    double temp = t0;
-    t0 = t1;
-    t1 = temp;
+    // make sure t0 is smaller than t1
+    if (t0 > t1)
+    {
+      // if t0 is bigger than t1 swap them around
+      double temp = t0;
+      t0 = t1;
+      t1 = temp;
+    }
+
+    // if t1 is less than zero, the object is in the ray's negative direction
+    // and consequently the ray misses the sphere
+    if (t1 < 0)
+      return false;
+
+    // if t0 is less than zero, the intersection point is at t1
+    if (t0 < 0)
+    {
+      t = t1;
+      return true;
+    }
+    // else the intersection point is at t0
+    else
+    {
+      t = t0;
+      return true;
+    }
   }
-
-  // if t1 is less than zero, the object is in the ray's negative direction
-  // and consequently the ray misses the sphere
-  if (t1 < 0)
+  else {
     return false;
-
-  // if t0 is less than zero, the intersection point is at t1
-  if (t0 < 0)
-  {
-    t = t1;
-    return true;
-  }
-  // else the intersection point is at t0
-  else
-  {
-    t = t0;
-    return true;
   }
  
 }
