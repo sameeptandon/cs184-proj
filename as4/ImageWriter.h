@@ -1,4 +1,4 @@
-#ifdef _IMAGEWRITER_H
+#ifndef _IMAGEWRITER_H
 #define _IMAGEWRITER_H
 #include <freeimage.h>
 

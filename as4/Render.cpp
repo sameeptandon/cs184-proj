@@ -16,7 +16,6 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "Viewport.h"
-#include "ImageWriter.h"
 
 #ifdef OSX
 #include <OpenGL/gl.h>
@@ -275,6 +274,9 @@ void myDisplay() {
   directional_lights.push_back(dl1);
   directional_lights.push_back(dl2);
   */
+  cout << "Loaded " << directional_lights.size() << " Directional Lights" << endl;
+  cout << "Loaded " << point_lights.size() << " Point Lights" << endl;
+  cout << "Loaded " << shapes.size() << " Shapes" << endl;
   Scene sc = Scene(shapes, point_lights, directional_lights);
   Camera cam = Camera(viewport, camr, aasamples);
   RayTracer rt = RayTracer(sc, cam, depth, writefile, outputfile);

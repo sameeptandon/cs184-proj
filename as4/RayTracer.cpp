@@ -59,10 +59,19 @@ void RayTracer::traceRay(Ray &r) {
       // for ambient term
       intensity += pl_color;
 
-      Ray r_light(Vector2d::Zero(), point, (pl_pos-point).normalized(), 1, s);
-      Shape *tmp;
-      if (_scene.intersect(r_light,t,&tmp)) continue;
-      Vector3d i_pl = (pl_pos - point); 
+      // soft shadows
+      // perturb the light position in the box surface it lives in
+      // fire N rays to the N points randomly sampled in the box
+      // multiply intensity by k/N where k is the num intersections w/ light
+      
+      int light_hits = 0;
+      int shadow_samples = 1;
+      for (int l = 0; l < shadow_samples; l++) {
+        Ray r_light(Vector2d::Zero(), point, (pl_pos-point).normalized(), 1, s);
+        Shape *tmp;
+        if (!_scene.intersect(r_light,t,&tmp)) light_hits++;
+      }
+        Vector3d i_pl = (pl_pos - point); 
 
       // Diffuse light
       Vector3d i_hat_pl = i_pl.normalized();
@@ -73,7 +82,7 @@ void RayTracer::traceRay(Ray &r) {
       Vector3d r_pl = -i_hat_pl + 2 * i_pl_dot_n * normal_hat;
       Vector3d spec_pl = ks.cwise() * pl_color * pow(max(0.0, r_pl.normalized().dot( (ray_orig-point).normalized() )), sp);
 
-      pixel_color += diff_pl + spec_pl;
+      pixel_color += ((double)light_hits / shadow_samples) * (diff_pl + spec_pl);
     } // for (point lights)
 
     // Loop over directional lights
