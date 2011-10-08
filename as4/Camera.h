@@ -23,9 +23,9 @@ class Camera {
   private:
     Viewport _viewport;
     Ray _location;
-    int _x, _y;
+    int _x, _y, _aa_sampling, _aa_count;
   public:
-    Camera(Viewport&, Ray&);
+    Camera(Viewport&, Ray&, int aa_sampling);
     bool generateSample(Ray&);
     inline void getViewport(Viewport &viewport) {viewport = _viewport;}
 };

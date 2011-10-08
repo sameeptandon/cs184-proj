@@ -262,7 +262,6 @@ void myDisplay() {
   }
 
 
-
   //PointLight* pl1 = new PointLight(Vector3d(0.0,0.0,-0.0), Vector3d(1.0, 1.0, 1.0));
   //point_lights.push_back(pl1);
 
@@ -275,7 +274,7 @@ void myDisplay() {
   cout << shapes.size() << endl;
   Scene sc = Scene(shapes, point_lights, directional_lights);
   Ray r = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-3.0), 0); 
-  Camera cam = Camera(viewport, r);
+  Camera cam = Camera(viewport, r, 1);
   RayTracer rt = RayTracer(sc, cam);
   rt.generateRays();
   // This should be done before any other objects are shaded
