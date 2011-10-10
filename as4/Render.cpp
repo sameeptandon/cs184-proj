@@ -34,6 +34,8 @@ using namespace std;
 int depth = 0;
 int ex = 1;
 int aasamples = 1;
+int shadow_samples = 1;
+int glossy_samples = 1;
 char outputfile[255];
 bool writefile = false;
 
@@ -83,10 +85,11 @@ void initScene(){
 }
 
 void myDisplay() {
-  glClear(GL_COLOR_BUFFER_BIT);				// clear the color buffer
-  glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
-  glLoadIdentity();							// make sure transformation is "zero'd"
-
+  if (!writefile) { 
+    glClear(GL_COLOR_BUFFER_BIT);				// clear the color buffer
+    glMatrixMode(GL_MODELVIEW);					// indicate we are specifying camera transformations
+    glLoadIdentity();							// make sure transformation is "zero'd"
+  }
   double sp = 50;
 
   Sphere *s1, *s2, *s3, *s4, *s5;
@@ -322,13 +325,15 @@ void myDisplay() {
   cout << "Anti-aliasing set to: " << aasamples << endl;
   Scene sc = Scene(shapes, point_lights, directional_lights);
   Camera cam = Camera(viewport, ll, lr, ul, camloc, aasamples);
-  RayTracer rt = RayTracer(sc, cam, depth, writefile, outputfile);
+  RayTracer rt = RayTracer(sc, cam, depth, shadow_samples, glossy_samples, writefile, outputfile);
   rt.generateRays();
   // This should be done before any other objects are shaded
   // so that other objects go on top of it
- 
-  glFlush();
-  glutSwapBuffers();					// swap buffers (we earlier set double buffer)
+
+  if (!writefile) { 
+    glFlush();
+    glutSwapBuffers();					// swap buffers (we earlier set double buffer)
+  }
 }
 
 void parseLine(ifstream &is, char c) {
@@ -518,33 +523,44 @@ int main(int argc, char *argv[]) {
       depth = atoi(argv[i+1]);
       i += 1;
     }
+    //shadow samples
+    else if (strcmp(argv[i], "-ss")==0 && i + 1 < argc) {
+      shadow_samples = atoi(argv[i+1]);
+      i += 1;
+    }
+    //glossy samples
+    else if (strcmp(argv[i], "-gs")==0 && i + 1 < argc) {
+      glossy_samples = atoi(argv[i+1]);
+      i += 1;
+    }
     else {
       usage();
     }
   }
 
   //This initializes glut
-  glutInit(&argc, argv);
-
-  //This tells glut to use a double-buffered window with red, green, and blue channels 
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-
   // Initalize theviewport size
-  viewport.w = 600;
-  viewport.h = 600;
+  viewport.w = 1000;
+  viewport.h = 1000;
 
   //The size and position of the window
   if( !writefile ) {
+
+    glutInit(&argc, argv);
+
+    //This tells glut to use a double-buffered window with red, green, and blue channels 
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+
     glutInitWindowSize(viewport.w, viewport.h);
     glutInitWindowPosition(0,0);
     glutCreateWindow(argv[0]);
     //Exit on spacebar
-    glutKeyboardFunc(processNormalKeys);
+    //glutKeyboardFunc(processNormalKeys);
 
     initScene();							// quick function to set up scene
 
     glutDisplayFunc(myDisplay);					// function to run when its time to draw something
-    glutReshapeFunc(myReshape);					// function to run when the window gets resized
+    //glutReshapeFunc(myReshape);					// function to run when the window gets resized
 
     glutMainLoop();							// infinite loop that will keep drawing and resizing and whatever else
   }

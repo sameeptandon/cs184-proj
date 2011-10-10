@@ -18,12 +18,13 @@ class RayTracer {
     vector<DirectionalLight*> dl; 
     Viewport v;
     int _max_depth;
+    int _shadow_samples, _glossy_samples;
     bool _writefile;
     char *_filename;
 
     void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b);
   public:
-    RayTracer(Scene &scene, Camera &camera, int depth, bool writefile, char* filename);
+    RayTracer(Scene &scene, Camera &camera, int depth, int shadow_samples, int glossy_samples, bool writefile, char* filename);
     void generateRays();
     void traceRay(Ray&);
 

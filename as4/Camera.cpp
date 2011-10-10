@@ -18,7 +18,14 @@ bool Camera::generateSample(Ray &r) {
     return false;
   }
 
-  Vector3d dir = -_location + _ll + (_lr-_ll)*((double) _x+drand48())/_viewport.w + (_ul-_ll)*((double) _y+drand48())/_viewport.h;
+  double x_perturb = drand48();
+  double y_perturb = drand48();
+  if (_aa_sampling == 1) {
+    x_perturb = 0;
+    y_perturb = 0;
+  }
+
+  Vector3d dir = -_location + _ll + (_lr-_ll)*((double) _x + x_perturb)/_viewport.w + (_ul-_ll)*((double) _y+ y_perturb)/_viewport.h;
   r = Ray(Vector2d(_x,_y), _location, dir, 0, Vector3d::Ones() / _aa_sampling); 
 
   _aa_count += 1;

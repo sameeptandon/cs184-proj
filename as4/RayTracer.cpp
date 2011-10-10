@@ -1,10 +1,13 @@
 #include "RayTracer.h"
 #include "ImageWriter.h"
 
-RayTracer::RayTracer(Scene &scene, Camera &camera, int depth, bool writefile, char* filename ) :
+RayTracer::RayTracer(Scene &scene, Camera &camera, int depth, int shadow_samples, int glossy_samples, bool writefile, char* filename ) :
+
   _scene(scene),
   _camera(camera),
   _max_depth(depth),
+  _shadow_samples(shadow_samples),
+  _glossy_samples(glossy_samples),
   _writefile(writefile),
   _filename(filename)
 {
@@ -67,12 +70,12 @@ void RayTracer::traceRay(Ray &r) {
       // multiply intensity by k/N where k is the num intersections w/ light
       
       int light_hits = 0;
-      int shadow_samples = 1;
+      int shadow_samples = _shadow_samples;
 
       for (int l = 0; l < shadow_samples; l++) {
         Vector3d perturb(drand48()-0.5, drand48()-0.5, drand48()-0.5);
         perturb *= 0.5;
-        //Vector3d perturb = Vector3d::Zero();
+        if (shadow_samples == 1) perturb *= 0;
 
         Ray r_light(Vector2d::Zero(), point, ((pl_pos+perturb)-point).normalized(), 1, s);
         Shape *tmp;
@@ -105,11 +108,12 @@ void RayTracer::traceRay(Ray &r) {
       intensity += dl_color;
 
       int light_hits = 0;
-      int shadow_samples = 1;
+      int shadow_samples = _shadow_samples;
 
       for (int l = 0; l < shadow_samples; l++) {
         Vector3d perturb(drand48()-0.5, drand48()-0.5, drand48()-0.5);
-        perturb *= 0.1;
+        perturb *= 0.05;
+        if (shadow_samples == 1) perturb *= 0.0;
         Ray r_light(Vector2d::Zero(), point, (-i_dl.normalized() + perturb).normalized(), 1, s);
         Shape *tmp;
         if (!_scene.intersect(r_light,t,&tmp)) light_hits++;
@@ -146,10 +150,11 @@ void RayTracer::traceRay(Ray &r) {
         double ray_dir_dot_n = ray_dir_hat.dot(normal_hat);  
         Vector3d reflect_dir = ray_dir_hat - 2 * ray_dir_dot_n * normal_hat;
         
-        int glossy_samples = 1;
+        int glossy_samples = _glossy_samples;
         for (int l = 0; l < glossy_samples; l++) {  
           Vector3d perturb(drand48()-0.5, drand48()-0.5, drand48()-0.5);
-          perturb *= 0.05;
+          perturb *= 0.1;
+          if (glossy_samples == 1) perturb *= 0;
           Ray reflect_ray = Ray(pix, point, (reflect_dir+perturb).normalized(), r.getDepth() + 1, km.cwise() * r_scale * (1.0 / glossy_samples), s);
           rayQueue.push(reflect_ray);
         }
@@ -184,7 +189,7 @@ void RayTracer::traceRay(Ray &r) {
 void RayTracer::generateRays() {
   Ray r;
 
-  cout << "Generating rays to trace..." << endl;
+  cout << "Generating and Tracing rays..." << endl;
   while(_camera.generateSample(r)) {
     Vector3d ray_dir, ray_origin;
     r.getDirection(ray_dir);
@@ -200,7 +205,7 @@ void RayTracer::generateRays() {
     }
   }
 
-  cout << "Tracing rays..." << endl;
+  cout << "Finishing Tracing rays..." << endl;
   while(!rayQueue.empty()) {
     r = rayQueue.front();
     traceRay(r);

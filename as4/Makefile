@@ -50,7 +50,7 @@ OBJECTS = render.o
 default: $(TARGETS)
 
 clean:
-	/bin/rm -f *.o $(TARGETS)
+	/bin/rm -f *.o *.dSYM $(TARGETS)
 
 #-----------------------------------------
 #-----------------------------------------
