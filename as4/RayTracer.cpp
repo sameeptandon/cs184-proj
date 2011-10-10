@@ -156,7 +156,10 @@ void RayTracer::traceRay(Ray &r) {
           perturb *= 0.1;
           if (glossy_samples == 1) perturb *= 0;
           Ray reflect_ray = Ray(pix, point, (reflect_dir+perturb).normalized(), r.getDepth() + 1, km.cwise() * r_scale * (1.0 / glossy_samples), s);
+          //boost::mutex::scoped_lock mylock(mymutex, boost::defer_lock);
+          //mylock.lock();
           rayQueue.push(reflect_ray);
+          //mylock.unlock();
         }
       }
       
@@ -195,17 +198,37 @@ void RayTracer::generateRays() {
     r.getDirection(ray_dir);
     r.getOrigin(ray_origin);
    // cout << "Direction: " << ray_dir.transpose() << " Origin: " << ray_origin.transpose() << endl;
-    rayQueue.push(r);
-    if (rayQueue.size() > 20) {
-      while(rayQueue.size() > 20) {
-        r = rayQueue.front();
-        traceRay(r);
-        rayQueue.pop();
+    //rayQueue.push(r);
+
+#if 1
+    //Ray r = rayQueue.front();
+    traceRay(r);
+    //rayQueue.pop();
+#endif
+
+#if 0
+    if (rayQueue.size() > 10000) {
+      cout << "THREADING" << endl; 
+      boost::thread_group group;
+      for (int num_threads = 0; num_threads < 4; num_threads++) { 
+        queue<Ray> thread_queue; 
+        for (int i = 0; i < 2500; i++) { 
+          r = rayQueue.front();
+          Ray rcopy = Ray(r);
+          thread_queue.push(rcopy);
+          //CallMyFuckingFunction(this, rcopy);
+          //traceRay(rcopy); // create thread 
+          rayQueue.pop();
+        }
+        group.create_thread( boost::bind(CallMyFuckingFunction,
+              this, thread_queue) );
       }
+      group.join_all(); 
     }
+#endif
   }
 
-  cout << "Finishing Tracing rays..." << endl;
+  cout << "Computing reflection rays..." << endl;
   while(!rayQueue.empty()) {
     r = rayQueue.front();
     traceRay(r);
@@ -232,4 +255,12 @@ void RayTracer::generateRays() {
 void RayTracer::setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
   glColor3f(r, g, b);
   glVertex2f(x+0.5, y+0.5);
+}
+
+void CallMyFuckingFunction(RayTracer* rt, queue<Ray>& rq) {
+  while (rq.size() > 0 ) {
+    Ray r = rq.front(); 
+    rt->traceRay(r);
+    rq.pop();
+  }
 }

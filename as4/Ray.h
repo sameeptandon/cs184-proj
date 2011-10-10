@@ -15,6 +15,7 @@ class Ray {
     int sign[3];
     Vector3d _origin, _direction, _inv_direction;
     Ray() {};
+    Ray(const Ray& rhs);
     Ray(Vector2d, Vector3d, Vector3d, int);
     Ray(Vector2d, Vector3d, Vector3d, int, Vector3d);
     Ray(Vector2d, Vector3d, Vector3d, int, Vector3d, Shape*);

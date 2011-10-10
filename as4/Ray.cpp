@@ -1,5 +1,20 @@
 #include "Ray.h"
 
+Ray::Ray(const Ray& rhs) {
+
+  _pixel = rhs._pixel;
+  _origin = rhs._origin;
+  _direction = rhs._direction;
+  _depth = rhs._depth; 
+  _scale = rhs._scale;
+  _ignore_shape = rhs._ignore_shape;
+  _inv_direction = rhs._inv_direction;
+  sign[0] = rhs.sign[0];
+  sign[1] = rhs.sign[1];
+  sign[2] = rhs.sign[2];
+
+}
+
 Ray::Ray(Vector2d pixel, Vector3d origin, Vector3d direction, int depth, Vector3d scale, Shape* ignore_shape) :
   _pixel(pixel) ,
   _origin(origin) ,

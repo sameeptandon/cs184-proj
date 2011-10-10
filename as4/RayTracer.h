@@ -7,6 +7,8 @@
 #include <vector>
 #include <queue>
 #include <string>
+//#include <boost/thread.hpp>
+
 
 class RayTracer {
   private:
@@ -21,12 +23,14 @@ class RayTracer {
     int _shadow_samples, _glossy_samples;
     bool _writefile;
     char *_filename;
-
     void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b);
+
   public:
     RayTracer(Scene &scene, Camera &camera, int depth, int shadow_samples, int glossy_samples, bool writefile, char* filename);
     void generateRays();
     void traceRay(Ray&);
 
 };
+
+void CallMyFuckingFunction(RayTracer* rt, queue<Ray>& r); 
 #endif //_RAYTRACER_H

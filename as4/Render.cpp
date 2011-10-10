@@ -325,8 +325,8 @@ void myDisplay() {
   cout << "Anti-aliasing set to: " << aasamples << endl;
   Scene sc = Scene(shapes, point_lights, directional_lights);
   Camera cam = Camera(viewport, ll, lr, ul, camloc, aasamples);
-  RayTracer rt = RayTracer(sc, cam, depth, shadow_samples, glossy_samples, writefile, outputfile);
-  rt.generateRays();
+  RayTracer* rt = new RayTracer(sc, cam, depth, shadow_samples, glossy_samples, writefile, outputfile);
+  rt->generateRays();
   // This should be done before any other objects are shaded
   // so that other objects go on top of it
 
