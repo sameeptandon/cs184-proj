@@ -3,8 +3,10 @@
 
 #include "Globals.h"
 #include "Shape.h"
+#include "Ray.h"
 #include <vector>
 #include <algorithm>
+#include <cfloat>
 
 #define DIMENSIONS 3
 
@@ -13,8 +15,10 @@ class Node {
     Node *left, *right;
     Node(vector<Shape*>, int);
     Node() {};
+    bool intersect(Ray&, double&, Shape*, Shape**);
   private:
     int _depth;
+    Box _bb;
     vector<Shape*> _shapes;
     bool leaf; //is it a leaf node? i.e. only contains one shape
 };

@@ -16,6 +16,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "Viewport.h"
+#include "Node.h"
 
 #ifdef OSX
 #include <OpenGL/gl.h>
@@ -38,6 +39,7 @@ int shadow_samples = 1;
 int glossy_samples = 1;
 char outputfile[255];
 bool writefile = false;
+bool kdAccel = true;
 
 Vector3d camloc = Vector3d(0.0, 0.0, 0.0); // Location of the camera
 Vector3d ll = Vector3d(-1.0, -1.0, -3.0);
@@ -47,6 +49,9 @@ vector<Shape*> shapes;
 vector<PointLight*> point_lights;
 vector<DirectionalLight*> directional_lights;
 vector<Vector3d> vertices;
+
+// kd-tree root
+Node root;
 
 /*function headers */
 void myReshape(int w, int h);
@@ -323,7 +328,8 @@ void myDisplay() {
   cout << "Window lr located at: " << lr.transpose() << endl;
   cout << "Window ul located at: " << ul.transpose() << endl;
   cout << "Anti-aliasing set to: " << aasamples << endl;
-  Scene sc = Scene(shapes, point_lights, directional_lights);
+  
+  Scene sc = Scene(shapes, point_lights, directional_lights, kdAccel);
   Camera cam = Camera(viewport, ll, lr, ul, camloc, aasamples);
   RayTracer rt = RayTracer(sc, cam, depth, shadow_samples, glossy_samples, writefile, outputfile);
   rt.generateRays();
