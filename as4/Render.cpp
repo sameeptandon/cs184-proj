@@ -39,7 +39,7 @@ int shadow_samples = 1;
 int glossy_samples = 1;
 char outputfile[255];
 bool writefile = false;
-bool kdAccel = true;
+bool kdAccel = false;
 
 Vector3d camloc = Vector3d(0.0, 0.0, 0.0); // Location of the camera
 Vector3d ll = Vector3d(-1.0, -1.0, -3.0);
@@ -498,6 +498,11 @@ void parseScene(char *filename) {
 
 int main(int argc, char *argv[]) {
 
+  //This initializes glut
+  // Initalize theviewport size
+  viewport.w = 1000;
+  viewport.h = 1000;
+ 
   // Read command line arguments
   int i = 0;
   while(++i != argc) {
@@ -539,17 +544,17 @@ int main(int argc, char *argv[]) {
       glossy_samples = atoi(argv[i+1]);
       i += 1;
     }
+    //turn kd-tree acceleration on or off
+    else if (strcmp(argv[i], "-kd")==0 && i + 1 < argc) {
+      kdAccel = atoi(argv[i+1])==0 ? false : true;
+      i += 1;
+    }
     else {
       usage();
     }
   }
 
-  //This initializes glut
-  // Initalize theviewport size
-  viewport.w = 1000;
-  viewport.h = 1000;
-
-  //The size and position of the window
+ //The size and position of the window
   if( !writefile ) {
 
     glutInit(&argc, argv);
