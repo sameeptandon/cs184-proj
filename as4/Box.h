@@ -15,9 +15,9 @@ class Box {
     Vector3d parameters[2];
     Box() { }
     Box(const Vector3d &min, const Vector3d &max) {
-      assert(min(0) < max(0) &&
-          min(1) < max(1) &&
-          min(2) < max(2)
+      assert(min(0) <= max(0) &&
+          min(1) <= max(1) &&
+          min(2) <= max(2)
           );
       parameters[0] = min;
       parameters[1] = max;

@@ -1,7 +1,10 @@
 #include "Camera.h"
 
-Camera::Camera(Viewport &viewport, Ray &loc, int aa_sampling) :
+Camera::Camera(Viewport &viewport, Vector3d &ll, Vector3d &lr, Vector3d &ul, Vector3d &loc, int aa_sampling) :
   _viewport(viewport),
+  _ll(ll),
+  _lr(lr),
+  _ul(ul),
   _location(loc),
   _aa_sampling(aa_sampling),
   _aa_count(0),
@@ -15,12 +18,8 @@ bool Camera::generateSample(Ray &r) {
     return false;
   }
 
-  // FIXME: Support rectangular screen and rotation matrix
-  Vector3d v, origin;
-  _location.getDirection(v);
-  _location.getOrigin(origin);
-  Vector3d dir = v + Vector3d(-1, -1, 0) + BOX_PARAM*Vector3d(((double) _x+drand48())/_viewport.w,((double) _y+drand48())/_viewport.h, 0);
-  r = Ray(Vector2d(_x,_y), origin, dir, 0, Vector3d::Ones() / _aa_sampling); 
+  Vector3d dir = -_location + _ll + (_lr-_ll)*((double) _x+drand48())/_viewport.w + (_ul-_ll)*((double) _y+drand48())/_viewport.h;
+  r = Ray(Vector2d(_x,_y), _location, dir, 0, Vector3d::Ones() / _aa_sampling); 
 
   _aa_count += 1;
   if(_aa_count == _aa_sampling) { 

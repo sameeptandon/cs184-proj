@@ -6,6 +6,8 @@
 #include "Ray.h"
 #include "Box.h"
 
+#define IGNOREBB false
+
 class Shape {
   protected:
     Vector3d _ka, _ks, _kd, _km;
@@ -13,6 +15,7 @@ class Shape {
     Box _bb;
     bool bbIntersect(Ray&);
   public:
+    inline const Box& box() {return _bb;}
     inline void getKa(Vector3d& ka) {ka = _ka;}
     inline void getKs(Vector3d& ks) {ks = _ks;}
     inline void getKd(Vector3d& kd) {kd = _kd;}

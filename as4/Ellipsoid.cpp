@@ -1,4 +1,6 @@
 #include "Ellipsoid.h"
+#include <cfloat>
+#include <vector>
 
 /*void rotation_from_euler_angles(Matrix3d& rotation, double angZ, double angY, double angX)
 {
@@ -48,8 +50,43 @@ Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double 
   _M_scale_inv = _M_scale.inverse();
   _M_rot_inv = _M_rot.inverse();
   _M_inv = _M.inverse();
+
   // Calculate bounding box
-  _bb = Box( translation - scale, translation + scale );
+  Vector3d v1 = Vector3d(1, 1, 1);
+  Vector3d v2 = Vector3d(1, 1, -1);
+  Vector3d v3 = Vector3d(1, -1, 1);
+  Vector3d v4 = Vector3d(1, -1, -1);
+  Vector3d v5 = Vector3d(-1, 1, 1);
+  Vector3d v6 = Vector3d(-1, 1, -1);
+  Vector3d v7 = Vector3d(-1, -1, 1);
+  Vector3d v8 = Vector3d(-1, -1, -1);
+  
+  vector<Vector3d> bbVertices;
+
+  bbVertices.push_back(v1);
+  bbVertices.push_back(v2);
+  bbVertices.push_back(v3);
+  bbVertices.push_back(v4);
+  bbVertices.push_back(v5);
+  bbVertices.push_back(v6);
+  bbVertices.push_back(v7);
+  bbVertices.push_back(v8);
+
+  double xmin = DBL_MAX, ymin = DBL_MAX, zmin = DBL_MAX;
+  double xmax = DBL_MIN, ymax = DBL_MIN, zmax = DBL_MIN;
+
+  for( int i = 0; i < bbVertices.size(); i++ ) {
+    Vector3d tmp = _translation + (_M * bbVertices[i]);
+    xmin = min(xmin, tmp(0));
+    ymin = min(ymin, tmp(1));
+    zmin = min(zmin, tmp(2));
+    xmax = max(xmax, tmp(0));
+    ymax = max(ymax, tmp(1));
+    zmax = max(zmax, tmp(2));
+  }
+  
+  _bb = Box( Vector3d(xmin, ymin, zmin), Vector3d(xmax, ymax, zmax) );
+
 };
 
 /**
@@ -64,7 +101,7 @@ Vector3d Ellipsoid::normal(Vector3d point) {
 }
 
 bool Ellipsoid::intersect(Ray& r, double &t) {
-  if( bbIntersect(r) ) {
+  if( IGNOREBB || bbIntersect(r) ) {
     Vector3d ray_dir, ray_orig;
     Vector3d ray_dir_unit_sphere, ray_orig_unit_sphere;
     r.getDirection(ray_dir);

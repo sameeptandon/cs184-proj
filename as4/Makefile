@@ -55,8 +55,8 @@ clean:
 #-----------------------------------------
 #-----------------------------------------
 
-render: Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o Box.o Shape.o
-	$(CC) Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o Box.o Shape.o $(LDOPTS)-o render
+render: Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o Box.o Shape.o Node.o
+	$(CC) Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o Box.o Shape.o Node.o $(LDOPTS)-o render
 
 PointLight.o: PointLight.cpp PointLight.h
 	$(CC) PointLight.cpp -c $(CCOPTS)
@@ -90,5 +90,8 @@ Scene.o: Scene.cpp Scene.h
 
 Box.o: Box.cpp Box.h Ray.h
 	$(CC) Box.cpp -c $(CCOPTS)
+
+Node.o: Node.cpp Node.h Ray.h Globals.h Shape.h
+	$(CC) Node.cpp -c $(CCOPTS)
 #export LD_LIBRARY_PATH="/usr/sww/pkg/Mesa/lib:/usr/lib:/usr/sww/lib"
 

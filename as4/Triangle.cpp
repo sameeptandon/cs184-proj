@@ -39,7 +39,7 @@ Vector3d Triangle::normal(Vector3d point) {
 
 //Follows: http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
 bool Triangle::intersect(Ray& r, double &t) {
-  if( bbIntersect(r) ) {
+  if( IGNOREBB || bbIntersect(r) ) {
 
     Vector3d ray_origin, ray_direction;
     r.getOrigin(ray_origin);

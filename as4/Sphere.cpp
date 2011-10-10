@@ -25,7 +25,7 @@ Vector3d Sphere::normal(Vector3d point) {
  * Adapted code from: http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection
  */
 bool Sphere::intersect(Ray& r, double &t) {
-  if( bbIntersect(r) ) {
+  if( IGNOREBB || bbIntersect(r) ) {
     Vector3d ray_dir, ray_orig;
     r.getDirection(ray_dir);
     r.getOrigin(ray_orig);

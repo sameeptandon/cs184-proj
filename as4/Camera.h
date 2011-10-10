@@ -22,10 +22,10 @@ USING_PART_OF_NAMESPACE_EIGEN
 class Camera {
   private:
     Viewport _viewport;
-    Ray _location;
+    Vector3d _location, _ll, _ul, _lr;
     int _x, _y, _aa_sampling, _aa_count;
   public:
-    Camera(Viewport&, Ray&, int aa_sampling);
+    Camera(Viewport&, Vector3d&, Vector3d&, Vector3d&, Vector3d&, int aa_sampling);
     bool generateSample(Ray&);
     inline void getViewport(Viewport &viewport) {viewport = _viewport;}
 };

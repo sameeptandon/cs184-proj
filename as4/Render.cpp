@@ -31,14 +31,16 @@
 using namespace std;
 
 // Global variables
-enum filetype_t {ELLIPSOID, OBJ, LIGHT};
 int depth = 0;
-int aasamples = 1;
 int ex = 1;
-bool writefile = false;
+int aasamples = 1;
 char outputfile[255];
+bool writefile;
 
-Ray camr = Ray(Vector2d(0,0), Vector3d(0.0,0.0,0.0), Vector3d(0.0,0.0,-3.0), 0); 
+Vector3d camloc = Vector3d(0.0, 0.0, 0.0); // Location of the camera
+Vector3d ll = Vector3d(-1.0, -1.0, -3.0);
+Vector3d lr = Vector3d(1.0, -1.0, -3.0);
+Vector3d ul = Vector3d(-1.0, 1.0, -3.0); // Window vertices
 vector<Shape*> shapes;
 vector<PointLight*> point_lights;
 vector<DirectionalLight*> directional_lights;
@@ -277,8 +279,13 @@ void myDisplay() {
   cout << "Loaded " << directional_lights.size() << " Directional Lights" << endl;
   cout << "Loaded " << point_lights.size() << " Point Lights" << endl;
   cout << "Loaded " << shapes.size() << " Shapes" << endl;
+  cout << "Camera located at: " << camloc.transpose() << endl;
+  cout << "Window ll located at: " << ll.transpose() << endl;
+  cout << "Window lr located at: " << lr.transpose() << endl;
+  cout << "Window ul located at: " << ul.transpose() << endl;
+  cout << "Anti-aliasing set to: " << aasamples << endl;
   Scene sc = Scene(shapes, point_lights, directional_lights);
-  Camera cam = Camera(viewport, camr, aasamples);
+  Camera cam = Camera(viewport, ll, lr, ul, camloc, aasamples);
   RayTracer rt = RayTracer(sc, cam, depth, writefile, outputfile);
   rt.generateRays();
   // This should be done before any other objects are shaded
@@ -288,17 +295,52 @@ void myDisplay() {
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
 }
 
-void parseEllipsoid(ifstream &is, char c) {
+void parseLine(ifstream &is, char c) {
+  char c2;
+  // Obj params
+  double x, y, z;
+  int i1, i2, i3;
+  // Ellipsoid/sphere params
+  double ka_r, ka_g, ka_b;
+  double ks_r, ks_g, ks_b;
+  double kd_r, kd_g, kd_b;
+  double km_r, km_g, km_b;
+  double sp;
+  double scale_x, scale_y, scale_z;
+  double trans_x, trans_y, trans_z;
+  double rot_x, rot_y, rot_z;
+  // Light params 
+  double r,g,b;
   switch(c) {
+    // Camera location
+    case 'c':
+      is >> x >> y >> z;
+      camloc = Vector3d(x,y,z);
+      break;
+    // ul, ll, lr correspond to 3 vertices of the window (4th is interpolated)
+    case 'u':
+      is >> c2;
+      switch(c2) {
+        case 'l':
+          is >> x >> y >> z;
+          ul = Vector3d(x,y,z);
+          break;
+      }
+      break;
+    case 'l':
+      is >> c2;
+      switch(c2) {
+        case 'l':
+          is >> x >> y >> z;
+          ll = Vector3d(x,y,z);
+          break;
+        case 'r':
+          is >> x >> y >> z;
+          lr = Vector3d(x,y,z);
+          break;
+      }
+      break;
     case 'e':
-      double ka_r, ka_g, ka_b;
-      double ks_r, ks_g, ks_b;
-      double kd_r, kd_g, kd_b;
-      double km_r, km_g, km_b;
-      double sp;
-      double scale_x, scale_y, scale_z;
-      double trans_x, trans_y, trans_z;
-      double rot_x, rot_y, rot_z;
       is >> ka_r >> ka_g >> ka_b; 
       is >> ks_r >> ks_g >> ks_b; 
       is >> kd_r >> kd_g >> kd_b; 
@@ -332,41 +374,6 @@ void parseEllipsoid(ifstream &is, char c) {
             Vector3d(rot_x, rot_y, rot_z)
             ));
       break;
-    default:
-      cout << "Every line has to begin with 'e'" << endl;
-      exit(1);
-      break;
-  }
-}
-
-void parseObj(ifstream &is, char c) {
-  double x, y, z;
-  int i1, i2, i3;
-  switch(c) {
-    case 'v':
-      is >> x >> y >> z;
-      vertices.push_back(Vector3d(x,y,z));
-    break;
-    case 'f':
-      is >> i1 >> i2 >> i3;
-      shapes.push_back(new Triangle(
-            Vector3d(0.1, 0.1, 0.1),
-            Vector3d(1.0, 0, 0),
-            Vector3d(1.0, 0, 0),
-            Vector3d(0.0, 0.0, 0.0),
-            20.0,
-            vertices[i1-1],
-            vertices[i2-1],
-            vertices[i3-1]
-            ));
-    break;
-  }
-}
-
-void parseLight(ifstream &is, char c) {
-  double x,y,z;
-  double r,g,b;
-  switch(c) {
     case 'd':
       is >> x >> y >> z;
       is >> r >> g >> b;
@@ -381,6 +388,28 @@ void parseLight(ifstream &is, char c) {
             Vector3d(x,y,z),
             Vector3d(r,g,b)));
       break;
+    case 'v':
+      is >> x >> y >> z;
+      vertices.push_back(Vector3d(x,y,z));
+      break;
+    case 'f':
+      is >> i1 >> i2 >> i3;
+      shapes.push_back(new Triangle(
+            Vector3d(0.1, 0.1, 0.1),
+            Vector3d(1.0, 0, 0),
+            Vector3d(1.0, 0, 0),
+            Vector3d(0.0, 0.0, 0.0),
+            20.0,
+            vertices[i1-1],
+            vertices[i2-1],
+            vertices[i3-1]
+            ));
+      break;
+    case 'r':
+      is >> i1 >> i2;
+      viewport.w = i1;
+      viewport.h = i2;
+      break;
     default:
       break;
   }
@@ -389,29 +418,17 @@ void parseLight(ifstream &is, char c) {
 /*
  * Code adapted from: http://www-inst.eecs.berkeley.edu/~cs184/fa11/resources/sec_TextParsing.pdf 
  */
-void parseScene(char *filename, filetype_t filetype) {
-  char line[1024];
+void parseScene(char *filename) {
   ifstream inFile(filename, ifstream::in);
   if(!inFile) {
     cout << "Could not open given file name" << endl;
     exit(1);
   }
-  int i = 0;
+  char c;
   while(true) {
-    char c;
     inFile >> c;
     if(!inFile.good()) break;
-    switch(filetype) {
-      case ELLIPSOID:
-        parseEllipsoid(inFile, c);
-        break;
-      case OBJ:
-        parseObj(inFile, c);
-        break;
-      case LIGHT:
-        parseLight(inFile, c);
-        break;
-    }
+    parseLine(inFile, c);
   }
   inFile.close();
 }
@@ -426,29 +443,16 @@ int main(int argc, char *argv[]) {
       ex = atoi(argv[i+1]);
       i += 1;
     }
-    // .obj file
-    else if (strcmp(argv[i], "-obj")==0 && i + 1 < argc) {
-      filetype_t type = OBJ;
-      parseScene(argv[i+1], type);
+    // input file
+    else if (strcmp(argv[i], "-i")==0 && i + 1 < argc) {
+      parseScene(argv[i+1]);
       i += 1;
+      ex = -1;
     }
-    // ellipsoid file
-    else if (strcmp(argv[i], "-ell")==0 && i + 1 < argc) {
-      filetype_t type = ELLIPSOID;
-      parseScene(argv[i+1], type);
-      i += 1;
-    }
-    // lights file
-    else if (strcmp(argv[i], "-l")==0 && i + 1 < argc) {
-      filetype_t type = LIGHT;
-      parseScene(argv[i+1], type);
-      i += 1;
-    }
-    // output file
+   // output file
     else if (strcmp(argv[i], "-o")==0 && i + 1 < argc) {
       strncpy(outputfile, argv[i+1], 255);
       outputfile[255] = '\0';
-      cout << outputfile << endl;
       writefile = true;
       i += 1;
     }
@@ -461,13 +465,6 @@ int main(int argc, char *argv[]) {
     else if (strcmp(argv[i], "-ref")==0 && i + 1 < argc) {
       depth = atoi(argv[i+1]);
       i += 1;
-    }
-    // camera location
-    else if (strcmp(argv[i], "-cam")==0 && i + 6 < argc) {
-      camr = Ray(Vector2d(0,0),
-          Vector3d(atof(argv[i+1]), atof(argv[i+2]), atof(argv[i+3])),
-          Vector3d(atof(argv[i+4]), atof(argv[i+5]), atof(argv[i+6])), 0);
-      i += 6;
     }
     else {
       usage();
