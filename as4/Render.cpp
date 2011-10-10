@@ -35,7 +35,7 @@ int depth = 0;
 int ex = 1;
 int aasamples = 1;
 char outputfile[255];
-bool writefile;
+bool writefile = false;
 
 Vector3d camloc = Vector3d(0.0, 0.0, 0.0); // Location of the camera
 Vector3d ll = Vector3d(-1.0, -1.0, -3.0);

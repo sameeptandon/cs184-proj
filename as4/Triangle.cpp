@@ -21,11 +21,11 @@ Triangle::Triangle(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp
   double xmin, ymin, zmin;
   double xmax, ymax, zmax;
   xmin = min(a(0), min(b(0), c(0)));
-  ymin = min(a(0), min(b(0), c(0)));
-  zmin = min(a(0), min(b(0), c(0)));
+  ymin = min(a(1), min(b(1), c(1)));
+  zmin = min(a(2), min(b(2), c(2)));
   xmax = max(a(0), max(b(0), c(0)));
-  ymax = max(a(0), max(b(0), c(0)));
-  zmax = max(a(0), max(b(0), c(0)));
+  ymax = max(a(1), max(b(1), c(1)));
+  zmax = max(a(2), max(b(2), c(2)));
 
   _bb = Box(Vector3d(xmin, ymin, zmin), Vector3d(xmax, ymax, zmax));
 };
