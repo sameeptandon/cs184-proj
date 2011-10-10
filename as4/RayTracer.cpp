@@ -36,12 +36,14 @@ void RayTracer::traceRay(Ray &r) {
     Vector3d point = ray_orig + t * ray_dir;
     Vector3d normal = s->normal(point);
     Vector3d normal_hat = normal.normalized();
-    Vector3d kd, ks, ka, km;
-    double sp;
+    Vector3d kd, ks, ka, km, kf;
+    double ref_ind, sp;
     s->getKd(kd);
     s->getKs(ks);
     s->getKa(ka);
     s->getKm(km);
+    s->getKf(kf);
+    s->getRfInd(ref_ind);
     s->getSp(sp);
 
     Vector3d intensity = Vector3d::Zero();
@@ -66,8 +68,13 @@ void RayTracer::traceRay(Ray &r) {
       
       int light_hits = 0;
       int shadow_samples = 1;
+
       for (int l = 0; l < shadow_samples; l++) {
-        Ray r_light(Vector2d::Zero(), point, (pl_pos-point).normalized(), 1, s);
+        Vector3d perturb(drand48()-0.5, drand48()-0.5, drand48()-0.5);
+        perturb *= 0.5;
+        //Vector3d perturb = Vector3d::Zero();
+
+        Ray r_light(Vector2d::Zero(), point, ((pl_pos+perturb)-point).normalized(), 1, s);
         Shape *tmp;
         if (!_scene.intersect(r_light,t,&tmp)) light_hits++;
       }
@@ -97,9 +104,16 @@ void RayTracer::traceRay(Ray &r) {
       // for ambient term
       intensity += dl_color;
 
-      Ray r_light(Vector2d::Zero(), point, -i_dl.normalized(), 1, s);
-      Shape *tmp;
-      if (_scene.intersect(r_light,t,&tmp)) continue;
+      int light_hits = 0;
+      int shadow_samples = 1;
+
+      for (int l = 0; l < shadow_samples; l++) {
+        Vector3d perturb(drand48()-0.5, drand48()-0.5, drand48()-0.5);
+        perturb *= 0.1;
+        Ray r_light(Vector2d::Zero(), point, (-i_dl.normalized() + perturb).normalized(), 1, s);
+        Shape *tmp;
+        if (!_scene.intersect(r_light,t,&tmp)) light_hits++;
+      }
 
       // Diffuse light
       Vector3d i_hat_dl = -i_dl.normalized();
@@ -110,7 +124,7 @@ void RayTracer::traceRay(Ray &r) {
       Vector3d r_dl = -i_hat_dl + 2 * i_dl_dot_n * normal_hat;
       Vector3d spec_dl = ks.cwise() * dl_color * pow(max(0.0, r_dl.normalized().dot( (ray_orig-point).normalized() )), sp);
 
-      pixel_color += diff_dl + spec_dl;
+      pixel_color += ((double)light_hits / shadow_samples) * (diff_dl + spec_dl);
     } // for (directional lights)
 
     Vector3d r_scale;
@@ -125,15 +139,39 @@ void RayTracer::traceRay(Ray &r) {
 #if 1
     // Add reflection ray to queue
     if( r.getDepth() < _max_depth ) {
-      Vector3d ray_dir_hat = -ray_dir.normalized();
-      double ray_dir_dot_n = ray_dir_hat.dot(normal_hat);  
-      Vector3d reflect_dir = -ray_dir_hat + 2 * ray_dir_dot_n * normal_hat;
-      //cout << "Pixel: " << pix.transpose() << " Reflecting ray origin: " << point.transpose() << " direction: " << reflect_dir.transpose() << " normal: " << normal_hat.transpose() << endl;
-      //exit(0);
-      Ray reflect_ray = Ray(pix, point, reflect_dir, r.getDepth() + 1, km.cwise() * r_scale, s);
-      rayQueue.push(reflect_ray);
+
+      //compute reflection if reflection coefficient exists
+      if (km(0) > 0 || km(1) > 0 || km(2) > 0 ) {  
+        Vector3d ray_dir_hat = ray_dir.normalized();
+        double ray_dir_dot_n = ray_dir_hat.dot(normal_hat);  
+        Vector3d reflect_dir = ray_dir_hat - 2 * ray_dir_dot_n * normal_hat;
+        
+        int glossy_samples = 1;
+        for (int l = 0; l < glossy_samples; l++) {  
+          Vector3d perturb(drand48()-0.5, drand48()-0.5, drand48()-0.5);
+          perturb *= 0.05;
+          Ray reflect_ray = Ray(pix, point, (reflect_dir+perturb).normalized(), r.getDepth() + 1, km.cwise() * r_scale * (1.0 / glossy_samples), s);
+          rayQueue.push(reflect_ray);
+        }
+      }
+      
+      if ( kf(0) > 0 || kf(1) > 0 || kf(2) > 0 ) {
+        double n1 = 1.0;
+        double n2 = ref_ind;
+        double n = n1 / n2; 
+        Vector3d ray_dir_hat = ray_dir.normalized();
+        double ray_dir_dot_n = ray_dir_hat.dot(normal_hat); 
+        double internal_refl = n * n * (1.0 - (ray_dir_dot_n * ray_dir_dot_n));
+        if (internal_refl < 1.0) { 
+          Vector3d refract_dir = n * ray_dir_hat - (n * ray_dir_dot_n + sqrt(1.0 - internal_refl))*normal_hat;
+          Ray refract_ray = Ray(pix, point, refract_dir, r.getDepth() + 1, kf.cwise() * r_scale, s);
+          rayQueue.push(refract_ray);
+        }
+      }
     }
 #endif
+
+    
 
     //cout << pixel_color.transpose() << endl;
     //cout << r_scale.transpose() << endl;
@@ -153,6 +191,13 @@ void RayTracer::generateRays() {
     r.getOrigin(ray_origin);
    // cout << "Direction: " << ray_dir.transpose() << " Origin: " << ray_origin.transpose() << endl;
     rayQueue.push(r);
+    if (rayQueue.size() > 20) {
+      while(rayQueue.size() > 20) {
+        r = rayQueue.front();
+        traceRay(r);
+        rayQueue.pop();
+      }
+    }
   }
 
   cout << "Tracing rays..." << endl;

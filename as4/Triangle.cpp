@@ -2,7 +2,7 @@
 #define INTERSECTION_EPS 0.0000000001
 
 
-Triangle::Triangle(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp, Vector3d a, Vector3d b, Vector3d c) :
+Triangle::Triangle(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, Vector3d kf, double rf_ind, double sp, Vector3d a, Vector3d b, Vector3d c) :
   _a(a),
   _b(b),
   _c(c) {
@@ -11,6 +11,8 @@ Triangle::Triangle(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp
   _kd = kd;
   _ks = ks;
   _km = km;
+  _kf = kf;
+  _rf_ind = rf_ind;
   _sp = sp;
 
   //precompute normal 

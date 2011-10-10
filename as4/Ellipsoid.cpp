@@ -2,14 +2,6 @@
 #include <cfloat>
 #include <vector>
 
-/*void rotation_from_euler_angles(Matrix3d& rotation, double angZ, double angY, double angX)
-{
-  Matrix3d rot1(Eigen::AngleAxisd(angZ, Vector3d::UnitZ()));
-  Vector3d axis2 = rot1*(Vector3d::UnitY());
-  Matrix3d rot2 = Eigen::AngleAxisd(angY, axis2)*rot1;
-  Vector3d axis3 = rot2*(Vector3d::UnitX());
-  rotation = Eigen::AngleAxisd(angX, axis3)*rot2;
-}*/
 
 void rotation_from_euler_angles(Matrix3d& rotation, double angZ, double angY, double angX)
 {
@@ -19,15 +11,9 @@ void rotation_from_euler_angles(Matrix3d& rotation, double angZ, double angY, do
   Vector3d axis3 = rot2*(Vector3d::UnitZ());
   rotation = Eigen::AngleAxisd(angZ, axis3)*rot2;
 }
-void euler_angles_from_rotation(const Matrix3d& rotation, double& angZ, double& angY, double& angX)
-{
- /* angZ = atan2(rotation(1,0), rotation(0,0));
-  angY = atan2(-rotation(2,0), sqrt(rotation(2,1)*rotation(2,1) + rotation(2,2)*rotation(2,2)));
-  angX = atan2(rotation(2,1), rotation(2,2));
-  */
-}
 
-Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double sp, Vector3d scale, Vector3d translation, Vector3d rotation) :
+Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, Vector3d kf, double rf_ind, double sp, Vector3d scale, Vector3d translation, Vector3d rotation) :
+
   _scale(scale),
   _translation(translation),
   _rotation(rotation)
@@ -38,6 +24,8 @@ Ellipsoid::Ellipsoid(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, double 
   _kd = kd;
   _ks = ks;
   _km = km;
+  _kf = kf;
+  _rf_ind = rf_ind;
   _sp = sp;
   // Calculate _M and _M_inverse
   rotation_from_euler_angles(_M_rot, rotation(0), rotation(1), rotation(2));

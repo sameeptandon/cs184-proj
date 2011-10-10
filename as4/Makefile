@@ -56,7 +56,7 @@ clean:
 #-----------------------------------------
 
 render: Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o Box.o Shape.o Node.o
-	$(CC) Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o Box.o Shape.o Node.o $(LDOPTS)-o render
+	$(CC) Render.cpp Ray.o Sphere.o Camera.o RayTracer.o Scene.o PointLight.o DirectionalLight.o Triangle.o Ellipsoid.o Box.o Shape.o Node.o $(LDOPTS) -o render
 
 PointLight.o: PointLight.cpp PointLight.h
 	$(CC) PointLight.cpp -c $(CCOPTS)

@@ -13,7 +13,7 @@ class Ellipsoid : public Sphere {
     Matrix3d _M_inv, _M_scale_inv, _M_rot_inv;
     Sphere _sphere;
   public:
-    Ellipsoid(Vector3d, Vector3d, Vector3d, Vector3d, double, Vector3d, Vector3d, Vector3d);
+    Ellipsoid(Vector3d, Vector3d, Vector3d, Vector3d, Vector3d, double, double, Vector3d, Vector3d, Vector3d);
     ~Ellipsoid();
     Vector3d normal(Vector3d);
     bool intersect(Ray&, double&);

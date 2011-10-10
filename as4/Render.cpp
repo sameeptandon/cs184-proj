@@ -93,6 +93,7 @@ void myDisplay() {
   Ellipsoid *e1, *e2, *e3, *e4, *e5;
   Triangle *t1, *t2, *t3;
   DirectionalLight *dl1, *dl2;
+  PointLight *pl1;
 
   switch(ex)
   {
@@ -102,30 +103,40 @@ void myDisplay() {
           Vector3d(1.0, 0.0, 0.0), // kd
           Vector3d(1.0, 1.0, 1.0), // ks
           Vector3d(0.9, 0.9, 0.9), // km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, Vector3d(0.0, 0.0, -17.0), 2.0);
       s2 = new Sphere(
           Vector3d(0.1, 0.1, 0.1)/2, // ka 
           Vector3d(0.0, 1.0, 0.0), // kd
           Vector3d(1.0, 1.0, 1.0), // ks
           Vector3d(0.9, 0.9, 0.9), // km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, Vector3d(0.0, 4.0, -17.0), 1.5);
       s3 = new Sphere(
           Vector3d(0.1, 0.1, 0.1)/2, // ka 
           Vector3d(0.0, 0.0, 1.0), // kd
           Vector3d(1.0, 1.0, 1.0), // ks
           Vector3d(0.9, 0.9, 0.9), // km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, Vector3d(0.0, -4.0, -17.0), 1.5);
       s4 = new Sphere(
           Vector3d(0.1, 0.1, 0.1)/2, // ka 
           Vector3d(1.0, 1.0, 0.0), // kd
           Vector3d(1.0, 1.0, 1.0), // ks
           Vector3d(0.9, 0.9, 0.9), // km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, Vector3d(4.0, 0.0, -17.0), 1.5);
       s5 = new Sphere(
           Vector3d(0.1, 0.1, 0.1)/2, // ka 
           Vector3d(0.0, 1.0, 1.0), // kd
           Vector3d(1.0, 1.0, 1.0), // ks
           Vector3d(0.9, 0.9, 0.9), // km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, Vector3d(-4.0, 0.0, -17.0), 1.5);
       shapes.push_back(s1);
       shapes.push_back(s2);
@@ -144,24 +155,32 @@ void myDisplay() {
           Vector3d(1.0, 0.0, 0.0), // kd
           Vector3d(1.0, 1.0, 1.0), // ks
           Vector3d(0.1, 0.1, 0.1), // km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, Vector3d(0.0, 0.0, -20.0), 3.0);
       s2 = new Sphere(
           Vector3d(0.1,0.1,0.1)/2, // ka 
-          Vector3d(1.0, 1.0, 0.0), // kd
-          Vector3d(1.0, 1.0, 1.0), // ks
+          Vector3d(0.0, 0.2, 0.2), // kd
+          Vector3d(0.0, 0.0, 0.0), // ks
           Vector3d(0.0, 0.0, 0.0), // km
-          sp, Vector3d(2.0, -2.0, -15.0), 1.0);
+          Vector3d(1.0, 1.0, 1.0), // kf
+          1.0, // rf_ind
+          sp, Vector3d(-1.0, -0.0, -15.0), 1.0);
       s3 = new Sphere(
           Vector3d(0.1,0.1,0.1)/2, // ka 
           Vector3d(0.0, 1.0, 1.0), // kd
           Vector3d(1.0, 1.0, 1.0), // ks
           Vector3d(0.0, 0.0, 0.0), // km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, Vector3d(-2.0, -2.0, -15.0), 1.0);
       t3 = new Triangle(
           Vector3d(0.1, 0.1, 0.1)/2, // ka
           Vector3d(0.1, 0.1, 0.1), // kd
           Vector3d(1.0, 1.0, 1.0), // ks
           Vector3d(1.0, 1.0, 1.0), // km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, 
           Vector3d(5.0, 5.0, -17.0), //v1 
           Vector3d(1.0, 4.0, -20.0), //v2
@@ -172,6 +191,8 @@ void myDisplay() {
           Vector3d(0.1, 0.1, 0.1), // kd
           Vector3d(1.0, 1.0, 1.0), // ks
           Vector3d(1.0, 1.0, 1.0), // km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, 
           Vector3d(15.0, -3.0, -30.0), //v1 
           Vector3d(-15.0, -3.0, -30.0), //v2
@@ -182,6 +203,8 @@ void myDisplay() {
           Vector3d(0.1, 0.1, 0.1), // kd
           Vector3d(1.0, 1.0, 1.0), // ks
           Vector3d(1.0, 1.0, 1.0), // km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, 
           Vector3d(15.0, -3.0, -5.0), //v2
           Vector3d(15.0, -3.0, -30.0), //v1 
@@ -198,6 +221,9 @@ void myDisplay() {
       dl2 = new DirectionalLight(Vector3d(-1.0, 1.0, 1.0), Vector3d(1.0, 1.0, 1.0));
       directional_lights.push_back(dl1);
       directional_lights.push_back(dl2);
+
+      //pl1 = new PointLight(Vector3d(-1.0, 1.0, 0.0), Vector3d(1.0, 1.0, 1.0));
+      //point_lights.push_back(pl1);
       break;
   case 3:
       e1 = new Ellipsoid(
@@ -205,6 +231,8 @@ void myDisplay() {
           Vector3d(1.0, 0.0, 0.0), //kd
           Vector3d(1.0, 1.0, 1.0), //ks
           Vector3d(0.9, 0.9, 0.9), //km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, //sp
           Vector3d(4.0, 2.0, 2.0), //scale
           Vector3d(0.0, 0.0, -17.0), //translation
@@ -216,6 +244,8 @@ void myDisplay() {
           Vector3d(0.0, 1.0, 0.0), //kd
           Vector3d(1.0, 1.0, 1.0), //ks
           Vector3d(0.9, 0.9, 0.9), //km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, //sp
           Vector3d(0.5, 1.5, 1.0), //scale
           Vector3d(-2.0, 4.0, -17.0), //translation
@@ -226,6 +256,8 @@ void myDisplay() {
           Vector3d(0.0, 0.0, 1.0), //kd
           Vector3d(1.0, 1.0, 1.0), //ks
           Vector3d(0.9, 0.9, 0.9), //km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, //sp
           Vector3d(0.5, 1.5, 1.0), //scale
           Vector3d(-2.0, -4.0, -17.0), //translation
@@ -236,6 +268,8 @@ void myDisplay() {
           Vector3d(1.0, 1.0, 0.0), //kd
           Vector3d(1.0, 1.0, 1.0), //ks
           Vector3d(0.9, 0.9, 0.9), //km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, //sp
           Vector3d(0.5, 1.5, 1.0), //scale
           Vector3d(2.0, 4.0, -17.0), //translation
@@ -246,6 +280,8 @@ void myDisplay() {
           Vector3d(0.0, 1.0, 1.0), //kd
           Vector3d(1.0, 1.0, 1.0), //ks
           Vector3d(0.9, 0.9, 0.9), //km
+          Vector3d(0.0, 0.0, 0.0), // kf
+          1.0, // rf_ind
           sp, //sp
           Vector3d(0.5, 1.5, 1.0), //scale
           Vector3d(2.0, -4.0, -17.0), //translation
@@ -341,10 +377,22 @@ void parseLine(ifstream &is, char c) {
       }
       break;
     case 'e':
+      double ka_r, ka_g, ka_b;
+      double ks_r, ks_g, ks_b;
+      double kd_r, kd_g, kd_b;
+      double km_r, km_g, km_b;
+      double kf_r, kf_g, kf_b;
+      double ref_ind;
+      double sp;
+      double scale_x, scale_y, scale_z;
+      double trans_x, trans_y, trans_z;
+      double rot_x, rot_y, rot_z;
       is >> ka_r >> ka_g >> ka_b; 
       is >> ks_r >> ks_g >> ks_b; 
       is >> kd_r >> kd_g >> kd_b; 
       is >> km_r >> km_g >> km_b; 
+      is >> kf_r >> kf_g >> kf_b; 
+      is >> ref_ind;
       is >> sp;
       is >> scale_x>> scale_y>> scale_z;
       is >> trans_x>> trans_y>> trans_z;
@@ -368,6 +416,8 @@ void parseLine(ifstream &is, char c) {
             Vector3d(ks_r, ks_g, ks_b),
             Vector3d(kd_r, kd_g, kd_b),
             Vector3d(km_r, km_g, km_b),
+            Vector3d(kf_r, kf_g, kf_b),
+            ref_ind,
             sp,
             Vector3d(scale_x, scale_y, scale_z),
             Vector3d(trans_x, trans_y, trans_z),
@@ -399,6 +449,8 @@ void parseLine(ifstream &is, char c) {
             Vector3d(1.0, 0, 0),
             Vector3d(1.0, 0, 0),
             Vector3d(0.0, 0.0, 0.0),
+            Vector3d(0.0, 0.0, 0.0),
+            1.0,
             20.0,
             vertices[i1-1],
             vertices[i2-1],
@@ -478,8 +530,8 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 
   // Initalize theviewport size
-  viewport.w = 1000;
-  viewport.h = 1000;
+  viewport.w = 600;
+  viewport.h = 600;
 
   //The size and position of the window
   if( !writefile ) {
