@@ -6,6 +6,7 @@
 #include "Light.h"
 #include "PointLight.h"
 #include "DirectionalLight.h"
+#include "Node.h"
 #include <vector>
 
 using namespace std;
@@ -16,10 +17,10 @@ class Scene {
     //vector<Light*> _lights;
     vector<PointLight*> _point_lights;
     vector<DirectionalLight*> _directional_lights;
-    //AABB tree
-    //BSP
+    Node _kdRoot;
+    bool _kdAccel;
   public:
-    Scene(vector<Shape*>&, vector<PointLight*>&, vector<DirectionalLight*>);
+    Scene(vector<Shape*>&, vector<PointLight*>&, vector<DirectionalLight*>, bool);
     bool intersect(Ray&, double&, Shape**);
     //inline void getLights(vector<Light*>& lights) {lights = _lights;}
     inline void getPointLights(vector<PointLight*>& point_lights) {point_lights = _point_lights;}

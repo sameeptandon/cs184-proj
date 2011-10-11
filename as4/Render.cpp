@@ -16,6 +16,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "Viewport.h"
+#include "Node.h"
 
 #ifdef OSX
 #include <OpenGL/gl.h>
@@ -38,6 +39,7 @@ int shadow_samples = 1;
 int glossy_samples = 1;
 char outputfile[255];
 bool writefile = false;
+bool kdAccel = false;
 
 Vector3d camloc = Vector3d(0.0, 0.0, 0.0); // Location of the camera
 Vector3d ll = Vector3d(-1.0, -1.0, -3.0);
@@ -47,6 +49,9 @@ vector<Shape*> shapes;
 vector<PointLight*> point_lights;
 vector<DirectionalLight*> directional_lights;
 vector<Vector3d> vertices;
+
+// kd-tree root
+Node root;
 
 /*function headers */
 void myReshape(int w, int h);
@@ -323,7 +328,8 @@ void myDisplay() {
   cout << "Window lr located at: " << lr.transpose() << endl;
   cout << "Window ul located at: " << ul.transpose() << endl;
   cout << "Anti-aliasing set to: " << aasamples << endl;
-  Scene sc = Scene(shapes, point_lights, directional_lights);
+  
+  Scene sc = Scene(shapes, point_lights, directional_lights, kdAccel);
   Camera cam = Camera(viewport, ll, lr, ul, camloc, aasamples);
   RayTracer* rt = new RayTracer(sc, cam, depth, shadow_samples, glossy_samples, writefile, outputfile);
   rt->generateRays();
@@ -492,6 +498,11 @@ void parseScene(char *filename) {
 
 int main(int argc, char *argv[]) {
 
+  //This initializes glut
+  // Initalize theviewport size
+  viewport.w = 1000;
+  viewport.h = 1000;
+ 
   // Read command line arguments
   int i = 0;
   while(++i != argc) {
@@ -533,17 +544,17 @@ int main(int argc, char *argv[]) {
       glossy_samples = atoi(argv[i+1]);
       i += 1;
     }
+    //turn kd-tree acceleration on or off
+    else if (strcmp(argv[i], "-kd")==0 && i + 1 < argc) {
+      kdAccel = atoi(argv[i+1])==0 ? false : true;
+      i += 1;
+    }
     else {
       usage();
     }
   }
 
-  //This initializes glut
-  // Initalize theviewport size
-  viewport.w = 1000;
-  viewport.h = 1000;
-
-  //The size and position of the window
+ //The size and position of the window
   if( !writefile ) {
 
     glutInit(&argc, argv);
