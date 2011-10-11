@@ -75,6 +75,7 @@ void processNormalKeys(unsigned char key, int x, int y) {
   if( key == 32 )
     exit(0);
 }
+    //Ray r = rayQueue.front();
 
 void usage() {
   cout << "Usage is undefined" << endl;
@@ -433,6 +434,43 @@ void parseLine(ifstream &is, char c) {
             Vector3d(scale_x, scale_y, scale_z),
             Vector3d(trans_x, trans_y, trans_z),
             Vector3d(rot_x, rot_y, rot_z)
+            ));
+      break;
+    case 't':
+      double v1_x, v1_y, v1_z;
+      double v2_x, v2_y, v2_z;
+      double v3_x, v3_y, v3_z;
+      is >> ka_r >> ka_g >> ka_b; 
+      is >> ks_r >> ks_g >> ks_b; 
+      is >> kd_r >> kd_g >> kd_b; 
+      is >> km_r >> km_g >> km_b; 
+      is >> kf_r >> kf_g >> kf_b; 
+      is >> ref_ind;
+      is >> sp;
+      is >> v1_x>> v1_y>> v1_z;
+      is >> v2_x>> v2_y>> v2_z;
+      is >> v3_x>> v3_y>> v3_z;
+      /*
+      cout << " " << ka_r << " " << ka_g << " " << ka_b << endl; 
+      cout << " " << ks_r << " " << ks_g << " " << ks_b << endl; 
+      cout << " " << kd_r << " " << kd_g << " " << kd_b << endl; 
+      cout << " " << km_r << " " << km_g << " " << km_b << endl; 
+      cout << " " << sp << endl;
+      cout << " " << v1_x<< " " << v1_y<< " " << v1_z << endl;
+      cout << " " << v2_x<< " " << v2_y<< " " << v2_z << endl;
+      cout << " " << v3_x<< " " << v3_y<< " " << v3_z << endl; 
+      */
+      shapes.push_back(new Triangle(
+            Vector3d(ka_r, ka_g, ka_b),
+            Vector3d(ks_r, ks_g, ks_b),
+            Vector3d(kd_r, kd_g, kd_b),
+            Vector3d(km_r, km_g, km_b),
+            Vector3d(kf_r, kf_g, kf_b),
+            ref_ind,
+            sp,
+            Vector3d(v1_x, v1_y, v1_z),
+            Vector3d(v2_x, v2_y, v2_z),
+            Vector3d(v3_x, v3_y, v3_z)
             ));
       break;
     case 'd':

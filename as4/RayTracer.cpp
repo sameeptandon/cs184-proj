@@ -153,13 +153,10 @@ void RayTracer::traceRay(Ray &r) {
         int glossy_samples = _glossy_samples;
         for (int l = 0; l < glossy_samples; l++) {  
           Vector3d perturb(drand48()-0.5, drand48()-0.5, drand48()-0.5);
-          perturb *= 0.1;
+          perturb *= 0.01;
           if (glossy_samples == 1) perturb *= 0;
           Ray reflect_ray = Ray(pix, point, (reflect_dir+perturb).normalized(), r.getDepth() + 1, km.cwise() * r_scale * (1.0 / glossy_samples), s);
-          //boost::mutex::scoped_lock mylock(mymutex, boost::defer_lock);
-          //mylock.lock();
           rayQueue.push(reflect_ray);
-          //mylock.unlock();
         }
       }
       
