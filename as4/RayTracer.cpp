@@ -200,9 +200,15 @@ void RayTracer::generateRays() {
    // cout << "Direction: " << ray_dir.transpose() << " Origin: " << ray_origin.transpose() << endl;
     //rayQueue.push(r);
 
+    traceRay(r);
 #if 1
     //Ray r = rayQueue.front();
-    traceRay(r);
+    while(!rayQueue.empty()) { 
+      Ray r = rayQueue.front();
+      traceRay(r);
+      rayQueue.pop();
+    }
+    
     //rayQueue.pop();
 #endif
 
