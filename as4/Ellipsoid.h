@@ -18,4 +18,7 @@ class Ellipsoid : public Sphere {
     Vector3d normal(Vector3d);
     bool intersect(Ray&, double&);
 };
+
+void rotation_from_euler_angles(Matrix3d& rotation, double angZ, double angY, double angX);
+
 #endif //_ELLIPSOID_H

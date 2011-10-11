@@ -2,7 +2,6 @@
 #include <cfloat>
 #include <vector>
 
-
 void rotation_from_euler_angles(Matrix3d& rotation, double angZ, double angY, double angX)
 {
   Matrix3d rot1(Eigen::AngleAxisd(angX, Vector3d::UnitX()));

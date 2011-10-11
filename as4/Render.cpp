@@ -324,6 +324,7 @@ void myDisplay() {
   cout << "Loaded " << directional_lights.size() << " Directional Lights" << endl;
   cout << "Loaded " << point_lights.size() << " Point Lights" << endl;
   cout << "Loaded " << shapes.size() << " Shapes" << endl;
+  cout << "Resolution set at " << viewport.w << "x" << viewport.h << endl;
   cout << "Camera located at: " << camloc.transpose() << endl;
   cout << "Window ll located at: " << ll.transpose() << endl;
   cout << "Window lr located at: " << lr.transpose() << endl;
@@ -343,6 +344,51 @@ void myDisplay() {
   }
 }
 
+void parseObj(Vector3d ka, Vector3d kd, Vector3d ks, Vector3d km, Vector3d kf, double rf_ind, double sp, Vector3d scale, Vector3d translation, Vector3d rotation, char* filename) {
+  ifstream in(filename, ifstream::in);
+  if(!in) {
+    cout << "Could not open given file name " << filename << endl;
+    exit(1);
+  }
+  char c;
+  double x,y,z;
+  Matrix3d M_rot, M_scale;
+  Vector3d transformed;
+  int i1, i2, i3;
+  while(true) {
+    in >> c;
+    if(!in.good()) break;
+    switch(c) {
+      case 'v':
+        in >> x >> y >> z;
+        rotation_from_euler_angles(M_rot, rotation(0), rotation(1), rotation(2));
+        for (int i = 0; i < 3; i++) { 
+          M_scale(i,i) = scale(i);
+        }
+        transformed = translation + M_rot * M_scale * Vector3d(x,y,z); 
+        vertices.push_back(transformed);
+        // cout << "Adding vertex at " << transformed.transpose() << endl;
+        break;
+      case 'f':
+        in >> i1 >> i2 >> i3;
+        shapes.push_back(new Triangle(
+              ka,
+              kd,
+              ks,
+              km,
+              kf,
+              rf_ind,
+              sp,
+              vertices[i1-1],
+              vertices[i2-1],
+              vertices[i3-1]
+              ));
+        break;
+    }
+  }
+  in.close();
+}
+
 void parseLine(ifstream &is, char c) {
   char c2;
   // Obj params
@@ -353,12 +399,15 @@ void parseLine(ifstream &is, char c) {
   double ks_r, ks_g, ks_b;
   double kd_r, kd_g, kd_b;
   double km_r, km_g, km_b;
+  double kf_r, kf_g, kf_b;
+  double ref_ind;
   double sp;
   double scale_x, scale_y, scale_z;
   double trans_x, trans_y, trans_z;
   double rot_x, rot_y, rot_z;
   // Light params 
   double r,g,b;
+  char filename[256];
   switch(c) {
     // Camera location
     case 'c':
@@ -389,16 +438,6 @@ void parseLine(ifstream &is, char c) {
       }
       break;
     case 'e':
-      double ka_r, ka_g, ka_b;
-      double ks_r, ks_g, ks_b;
-      double kd_r, kd_g, kd_b;
-      double km_r, km_g, km_b;
-      double kf_r, kf_g, kf_b;
-      double ref_ind;
-      double sp;
-      double scale_x, scale_y, scale_z;
-      double trans_x, trans_y, trans_z;
-      double rot_x, rot_y, rot_z;
       is >> ka_r >> ka_g >> ka_b; 
       is >> ks_r >> ks_g >> ks_b; 
       is >> kd_r >> kd_g >> kd_b; 
@@ -487,26 +526,30 @@ void parseLine(ifstream &is, char c) {
             Vector3d(x,y,z),
             Vector3d(r,g,b)));
       break;
-    case 'v':
-      is >> x >> y >> z;
-      vertices.push_back(Vector3d(x,y,z));
-      break;
-    case 'f':
-      is >> i1 >> i2 >> i3;
-      shapes.push_back(new Triangle(
-            Vector3d(0.1, 0.1, 0.1),
-            Vector3d(1.0, 0, 0),
-            Vector3d(1.0, 0, 0),
-            Vector3d(0.0, 0.0, 0.0),
-            Vector3d(0.0, 0.0, 0.0),
-            1.0,
-            20.0,
-            vertices[i1-1],
-            vertices[i2-1],
-            vertices[i3-1]
-            ));
-      break;
-    case 'r':
+    case 'o': // obj file
+      is >> ka_r >> ka_g >> ka_b; 
+      is >> ks_r >> ks_g >> ks_b; 
+      is >> kd_r >> kd_g >> kd_b; 
+      is >> km_r >> km_g >> km_b; 
+      is >> kf_r >> kf_g >> kf_b; 
+      is >> ref_ind;
+      is >> sp;
+      is >> scale_x>> scale_y>> scale_z;
+      is >> trans_x>> trans_y>> trans_z;
+      is >> rot_x>> rot_y>> rot_z;
+      is >> filename;
+      parseObj(Vector3d(ka_r, ka_g, ka_b),
+            Vector3d(ks_r, ks_g, ks_b),
+            Vector3d(kd_r, kd_g, kd_b),
+            Vector3d(km_r, km_g, km_b),
+            Vector3d(kf_r, kf_g, kf_b),
+            ref_ind,
+            sp,
+            Vector3d(scale_x, scale_y, scale_z),
+            Vector3d(trans_x, trans_y, trans_z),
+            Vector3d(rot_x, rot_y, rot_z),
+            filename);
+   case 'r':
       is >> i1 >> i2;
       viewport.w = i1;
       viewport.h = i2;
@@ -516,13 +559,15 @@ void parseLine(ifstream &is, char c) {
   }
 }
 
+
+
 /*
  * Code adapted from: http://www-inst.eecs.berkeley.edu/~cs184/fa11/resources/sec_TextParsing.pdf 
  */
 void parseScene(char *filename) {
   ifstream inFile(filename, ifstream::in);
   if(!inFile) {
-    cout << "Could not open given file name" << endl;
+    cout << "Could not open given file name " << filename << endl;
     exit(1);
   }
   char c;
