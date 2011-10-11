@@ -1,6 +1,7 @@
 #include "RayTracer.h"
 #include "ImageWriter.h"
 
+
 RayTracer::RayTracer(Scene &scene, Camera &camera, int depth, int shadow_samples, int glossy_samples, bool writefile, char* filename ) :
 
   _scene(scene),
@@ -30,7 +31,7 @@ void RayTracer::traceRay(Ray &r) {
   Shape* s;
   Vector2d pix;
   Vector3d a,b;
-  
+
   if(_scene.intersect(r, t, &s)) {
     r.getPixel(pix);
     Vector3d ray_orig, ray_dir;
@@ -231,14 +232,21 @@ void RayTracer::generateRays() {
 #endif
   }
 
-  cout << "Computing reflection rays..." << endl;
+  cout << "\n\n";
+  cout << "\033[m";
+/*  cout << "Computing reflection rays..." << endl;
   while(!rayQueue.empty()) {
     r = rayQueue.front();
+    cout << "\033[31;1mRays \033[32;1mleft \033[33;1mto \033[34;1mtrace: \033[35;1m" << rayQueue.size() << "     \r";
     traceRay(r);
     rayQueue.pop();
   }
   
+  cout << "\n\n";
+  cout << "\033[m";
+*/  
   if( _writefile ) {
+    cout << "Writing to file " << _filename << endl;
     save_opengl_image(v.w, v.h, _filename, pixel_colors);
     exit(0);
   }  

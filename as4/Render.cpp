@@ -326,6 +326,9 @@ void myDisplay() {
   cout << "Loaded " << shapes.size() << " Shapes" << endl;
   cout << "Resolution set at " << viewport.w << "x" << viewport.h << endl;
   cout << "Camera located at: " << camloc.transpose() << endl;
+  if(kdAccel) {
+    cout << "AABB tree acceleration on" << endl;
+  }
   cout << "Window ll located at: " << ll.transpose() << endl;
   cout << "Window lr located at: " << lr.transpose() << endl;
   cout << "Window ul located at: " << ul.transpose() << endl;
