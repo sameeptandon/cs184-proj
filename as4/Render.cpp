@@ -39,7 +39,7 @@ int shadow_samples = 1;
 int glossy_samples = 1;
 char outputfile[255];
 bool writefile = false;
-bool kdAccel = false;
+bool kdAccel = true;
 
 Vector3d camloc = Vector3d(0.0, 0.0, 0.0); // Location of the camera
 Vector3d ll = Vector3d(-1.0, -1.0, -3.0);
@@ -629,9 +629,8 @@ int main(int argc, char *argv[]) {
       i += 1;
     }
     //turn kd-tree acceleration on or off
-    else if (strcmp(argv[i], "-kd")==0 && i + 1 < argc) {
-      kdAccel = atoi(argv[i+1])==0 ? false : true;
-      i += 1;
+    else if (strcmp(argv[i], "-nokd")==0) {
+      kdAccel = false;
     }
     else {
       usage();
