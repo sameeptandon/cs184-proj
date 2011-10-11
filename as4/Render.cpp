@@ -542,6 +542,9 @@ void parseLine(ifstream &is, char c) {
       is >> trans_x>> trans_y>> trans_z;
       is >> rot_x>> rot_y>> rot_z;
       is >> filename;
+      rot_x = rot_x * M_PI/180.0;
+      rot_y = rot_y * M_PI/180.0;
+      rot_z = rot_z * M_PI/180.0;
       parseObj(Vector3d(ka_r, ka_g, ka_b),
             Vector3d(ks_r, ks_g, ks_b),
             Vector3d(kd_r, kd_g, kd_b),

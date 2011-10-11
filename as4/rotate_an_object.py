@@ -1,7 +1,7 @@
 import os
+from multiprocessing import Pool
 
-
-for i in range(0,360):
+def f(i):
   file = """c 0 0 3
 ll -0.8 -0.3 1
 lr 0.9 -0.3 1
@@ -20,7 +20,9 @@ o 0.1 0.1 0.1 0.0 1.0 0.0 1.0 1.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 50.0 1.0 1.0 1
   f.write(file)
   f.close()
 
-  os.system('./render -i scenes/rot-scene -o angel_pics/test-%.4d.png -aa 4 -ref 1 ' %i)
+  os.system('./render -i scenes/rot-scene -o angel_pics/test-%.4d.png -aa 4 -ref 1 ' % i)
 
-
+if __name__ == '__main__':
+  p = Pool(processes=6)
+  p.map(f, range(360))
 
