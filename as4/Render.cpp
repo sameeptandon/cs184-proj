@@ -321,15 +321,16 @@ void myDisplay() {
   directional_lights.push_back(dl1);
   directional_lights.push_back(dl2);
   */
-  cout << "Loaded " << directional_lights.size() << " Directional Lights" << endl;
-  cout << "Loaded " << point_lights.size() << " Point Lights" << endl;
-  cout << "Loaded " << shapes.size() << " Shapes" << endl;
-  cout << "Resolution set at " << viewport.w << "x" << viewport.h << endl;
-  cout << "Camera located at: " << camloc.transpose() << endl;
-  cout << "Window ll located at: " << ll.transpose() << endl;
-  cout << "Window lr located at: " << lr.transpose() << endl;
-  cout << "Window ul located at: " << ul.transpose() << endl;
-  cout << "Anti-aliasing set to: " << aasamples << endl;
+  cout << "\033[37;0mLoaded " << directional_lights.size() << " Directional Lights" << endl;
+  cout << "\033[37;1mLoaded " << point_lights.size() << " Point Lights" << endl;
+  cout << "\033[36;1mLoaded " << shapes.size() << " Shapes" << endl;
+  cout << "\033[30;1mResolution set at " << viewport.w << "x" << viewport.h << endl;
+  cout << "\033[35;1mCamera located at: " << camloc.transpose() << endl;
+  cout << "\033[34;1mindow ll located at: " << ll.transpose() << endl;
+  cout << "\033[33;1mWindow lr located at: " << lr.transpose() << endl;
+  cout << "\033[32;1mWindow ul located at: " << ul.transpose() << endl;
+  cout << "\033[31;1mAnti-aliasing set to: " << aasamples << endl;
+  cout << "\033[m" << endl; 
   
   Scene sc = Scene(shapes, point_lights, directional_lights, kdAccel);
   Camera cam = Camera(viewport, ll, lr, ul, camloc, aasamples);
