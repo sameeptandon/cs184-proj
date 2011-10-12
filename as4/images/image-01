@@ -1,0 +1,1 @@
+../render -i ../scenes/scene-01 -o image-01.png -nokd

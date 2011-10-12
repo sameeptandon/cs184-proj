@@ -1,0 +1,1 @@
+../render -i ../scenes/scene-05 -o image-08.png -ref 5 -ss 100 -aa 16

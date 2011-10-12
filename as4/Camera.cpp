@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-#define PROGRESS_INTERVAL 47
+#define PROGRESS_INTERVAL 10
 
 Camera::Camera(Viewport &viewport, Vector3d &ll, Vector3d &lr, Vector3d &ul, Vector3d &loc, int aa_sampling) :
   _viewport(viewport),
