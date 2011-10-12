@@ -1,1 +1,1 @@
-../render -i ../scenes/scene-05 -o image-09.png -ref 3 -aa 16
+../render -i ../scenes/scene-05 -o image-07.png -ref 3 -aa 16

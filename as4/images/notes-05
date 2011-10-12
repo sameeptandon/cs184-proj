@@ -1,1 +1,3 @@
 In this scene, we show an extra credit feature: glossy (blurry) reflections on our objections. We do this by perturbing the reflection rays and taking the average of the values returned. This is supposed to give the objects a metallic look.
+
+Time: 59.7 seconds on hive
