@@ -12,3 +12,11 @@ http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection
 Our ray-triangle intersection code follows: http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
 
 Any other code adapted from online or sources are commented within the source code.
+
+Beyond the features in the specification, we have implemented:
+- AABB Acceleration using a KD-Tree
+- Anti aliasing
+- Soft Shadows
+- Glossy Surfaces
+- Refractions
+
