@@ -1,0 +1,1 @@
+Here we render a dragon obj file to show that our AABB tree acceleration is working. If it weren't it wouldn't be possible for this to be rendered in any reasonable amount of time. We also add a few "fireballs" (yes, that's what those ellipsoids are supposed to be). They are crudely shaped, and the juxtaposition of these ellipsoids next to the dragon is suppose to be ironic.
