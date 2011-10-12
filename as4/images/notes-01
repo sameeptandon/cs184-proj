@@ -1,0 +1,1 @@
+This image shows that our raytracer correctly does intersection tests for spheres. It also shows that we are doing Phong shading correctly, and that our directional lights are working.

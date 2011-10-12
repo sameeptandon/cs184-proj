@@ -1,0 +1,1 @@
+Here we show an anti-aliased version of the same scene. We fire 16 rays per pixel for this scene. Notice that the edges of the triangles are much smoother. Anti-aliasing is obtained by perturbing the rays that we fire from the camera to the window.
