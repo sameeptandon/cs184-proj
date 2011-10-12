@@ -2,8 +2,11 @@ Sameep Tandon - cs184-am
 Daiwei Li - cs184-fz
 
 Our code should compile and run on Ubuntu (tested on hive.cs and Daiwei's laptop running 11.04 x64).
+The inputs and corresponding notes files are located in the images folder.
 
 cs184-fz submitted the source code
 
 Our ray-sphere intersection code is adapted from
 http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection
+
+Any other code adapted from online or sources are commented within the source code.
