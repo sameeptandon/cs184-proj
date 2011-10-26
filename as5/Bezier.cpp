@@ -74,21 +74,24 @@ void myDisplay() {
   glMatrixMode(GL_PROJECTION);					// indicate we are specifying camera transformations
   glLoadIdentity();							// make sure transformation is "zero'd"
 
+  glOrtho(-5, 5, -5, 5, -5, 5);
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
   //glEnable(GL_LIGHTING); // turn on the lights, we have power!!!
 
   //glTranslatef(0, 0, -10);
-  glScaled(.25, .25, 1); // make the scene smaller so we can see the damn thing
+  //glScaled(.25, .25, 1); // make the scene smaller so we can see the damn thing
   glRotated(ry, 1.0, 0.0, 0.0);
   glRotated(rx, 0.0, 1.0, 0.0);
 
   glColor3f(1.0f,0.5f,0.0f);          // setting the color to orange
  
-  glutSolidTeapot(1);
-  /*
+  //glutSolidTeapot(1);
   for( int i = 0; i < patches.size() ; i++ ) {
-    patches[i].UniformSubdivide(1.0/10.0);
+    patches[i].UniformSubdivide(1.0/30.0);
+    //patches[i].Draw();
   }
-  */
  
   // This should be done before any other objects are shaded
   // so that other objects go on top of it

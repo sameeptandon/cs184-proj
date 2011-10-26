@@ -15,7 +15,7 @@ bool BezierPatch::AddPoint(Vector3d &point) {
 
 void BezierPatch::Draw() {
   for( int i = 0; i < 4; i++ ) {
-    glBegin(GL_LINE_STRIP);
+    glBegin(GL_POINTS);
     for( int j = 0; j < 4; j++ ) {
       glVertex3d(controlPointsUV[i][j][0], controlPointsUV[i][j][1], controlPointsUV[i][j][2]);
     }
@@ -70,7 +70,7 @@ void BezierPatch::PatchInterp(double u, double v, Vector3d &p, Vector3d &n) {
 void BezierPatch::UniformSubdivide(double step) {
   // compute how many subdivisions there 
   // are for this step size
-  glBegin(GL_POLYGON);
+  glBegin(GL_POINTS);
   double epsilon = 0.001;
   int numdiv = ( (1.0 + epsilon) / step);
 
@@ -80,19 +80,19 @@ void BezierPatch::UniformSubdivide(double step) {
   Vector3d ptur, normalur;
   PatchInterp(0, 0, ptll, normalll);
   PatchInterp(step, 0, ptlr, normallr);
-  glNormal3d(normalll(0), normalll(1), normalll(2));
+  //glNormal3d(normalll(0), normalll(1), normalll(2));
   glVertex3d(ptll(0), ptll(1), ptll(2));
-  glNormal3d(normallr(0), normallr(1), normallr(2));
+  //glNormal3d(normallr(0), normallr(1), normallr(2));
   glVertex3d(ptlr(0), ptlr(1), ptlr(2));
 
   // for each parametric value of u
-  for (int iu = 0; iu < numdiv-1; iu++) {
-    glBegin(GL_QUAD_STRIP);
+  for (int iu = 0; iu < numdiv; iu++) {
+    //glBegin(GL_POINTS);
     double u = iu * step;
     double upp = (iu+1) * step;
 
     // for each parametric value of v
-    for (int iv = 0; iv < numdiv-1; iv++) {
+    for (int iv = 0; iv < numdiv; iv++) {
       double v = iv * step;
       double vpp = (iv+1) * step;
 
@@ -108,7 +108,7 @@ void BezierPatch::UniformSubdivide(double step) {
       normalll = normalul;
       normallr = normalur;
     }
-    glEnd();
   }
 
+    glEnd();
 }
