@@ -62,6 +62,9 @@ void BezierPatch::PatchInterp(double u, double v, Vector3d &p, Vector3d &n) {
   CurveInterp(ucurve, u, upt, utang);
   // take cross product of partials to find normal
   n = utang.cross(vtang).normalized(); 
+  if( ((int) n.norm()) != 1 ) {
+    // cout << n.norm() << endl;
+  }
   assert((upt-vpt).norm() < 0.001);
   p = upt;
 }

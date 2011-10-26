@@ -85,7 +85,7 @@ void myDisplay() {
   glRotated(ry, 1.0, 0.0, 0.0);
   glRotated(rx, 0.0, 1.0, 0.0);
 
-  glColor3f(1.0f,0.5f,0.0f);          // setting the color to orange
+  //glColor3f(1.0f,0.5f,0.0f);          // setting the color to orange
  
   //glutSolidTeapot(1);
   for( int i = 0; i < patches.size() ; i++ ) {
@@ -104,6 +104,29 @@ void myDisplay() {
     save_opengl_image(viewport.w, viewport.h, filename);
     exit(0);
   }
+}
+
+
+/*
+ * Stole code from: 
+ */
+void initlights(void)
+{
+  GLfloat ambient[] = {0.2, 0.2, 0.2, 1.0};
+  GLfloat position[] = {0.0, 0.0, 10.0, 1.0};
+  GLfloat mat_diffuse[] = {0.6, 0.6, 0.6, 1.0};
+  GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
+  GLfloat mat_shininess[] = {50.0};
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+
+  glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+  glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+  glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 }
 
 void parsePatch(ifstream &is) {
@@ -225,6 +248,7 @@ int main(int argc, char *argv[]) {
   glutMouseFunc(processMouse);
   */
   initScene();							// quick function to set up scene
+  initlights();
 
   glutMotionFunc(MouseMotion);
   glutMouseFunc(processMouse);
