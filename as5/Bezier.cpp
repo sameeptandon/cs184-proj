@@ -89,7 +89,8 @@ void myDisplay() {
  
   //glutSolidTeapot(1);
   for( int i = 0; i < patches.size() ; i++ ) {
-    patches[i].UniformSubdivide(1.0/30.0);
+    patches[i].UniformSubdivide(1.0/10.0);
+    //patches[i].UniformSubdivide(1.0);
     //patches[i].Draw();
   }
  

@@ -70,7 +70,6 @@ void BezierPatch::PatchInterp(double u, double v, Vector3d &p, Vector3d &n) {
 void BezierPatch::UniformSubdivide(double step) {
   // compute how many subdivisions there 
   // are for this step size
-  glBegin(GL_POINTS);
   double epsilon = 0.001;
   int numdiv = ( (1.0 + epsilon) / step);
 
@@ -78,27 +77,31 @@ void BezierPatch::UniformSubdivide(double step) {
   Vector3d ptlr, normallr;
   Vector3d ptul, normalul;
   Vector3d ptur, normalur;
+  
+  /*glBegin(GL_POLYGON);
   PatchInterp(0, 0, ptll, normalll);
   PatchInterp(step, 0, ptlr, normallr);
-  //glNormal3d(normalll(0), normalll(1), normalll(2));
+  glNormal3d(normalll(0), normalll(1), normalll(2));
   glVertex3d(ptll(0), ptll(1), ptll(2));
-  //glNormal3d(normallr(0), normallr(1), normallr(2));
+  glNormal3d(normallr(0), normallr(1), normallr(2));
   glVertex3d(ptlr(0), ptlr(1), ptlr(2));
-
+  glEnd();
+  */
   // for each parametric value of u
   for (int iu = 0; iu < numdiv; iu++) {
+    glBegin(GL_QUAD_STRIP);
     //glBegin(GL_POINTS);
     double u = iu * step;
     double upp = (iu+1) * step;
 
     // for each parametric value of v
-    for (int iv = 0; iv < numdiv; iv++) {
+    for (int iv = 0; iv <= numdiv; iv++) {
       double v = iv * step;
-      double vpp = (iv+1) * step;
+      //double vpp = (iv+1) * step;
 
       // evaluate surface
-      PatchInterp(u, vpp, ptul, normalul);
-      PatchInterp(upp, vpp, ptur, normalur);
+      PatchInterp(u, v, ptul, normalul);
+      PatchInterp(upp, v, ptur, normalur);
       glNormal3d(normalul(0), normalul(1), normalul(2));
       glVertex3d(ptul(0), ptul(1), ptul(2));
       glNormal3d(normalur(0), normalur(1), normalur(2));
@@ -108,7 +111,8 @@ void BezierPatch::UniformSubdivide(double step) {
       normalll = normalul;
       normallr = normalur;
     }
-  }
 
     glEnd();
+  }
+
 }
