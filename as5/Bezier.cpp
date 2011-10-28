@@ -44,8 +44,8 @@ void initScene(){
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear to black, fully transparent
 
   glViewport (0,0,viewport.w,viewport.h);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
+  //glMatrixMode(GL_PROJECTION);
+  //glLoadIdentity();
   gluOrtho2D(0,viewport.w, 0, viewport.h);
 }
 
@@ -56,11 +56,21 @@ void initScene(){
 void myReshape(int w, int h) {
   viewport.w = w;
   viewport.h = h;
+  glViewport(0, 0, viewport.w, viewport.h);
 
-  glViewport (0,0,viewport.w,viewport.h);
+  // set perspective viewing frustum
+  float aspectRatio = (float)w / h;
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(0, viewport.w, 0, viewport.h);
+  //glFrustum(-aspectRatio, aspectRatio, -1, 1, 1, 100);
+  gluPerspective(60.0f, (float)(w)/h, 1.0f, 1000.0f); // FOV, AspectRatio, NearClip, FarClip
+
+  // switch to modelview matrix in order to set scene
+  glMatrixMode(GL_MODELVIEW);
+
+    //glMatrixMode(GL_PROJECTION);
+  //glLoadIdentity();
+  //gluOrtho2D(0, viewport.w, 0, viewport.h);
 
 }
 
@@ -71,28 +81,33 @@ void myDisplay() {
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);				// clear the color buffer
 
-  glMatrixMode(GL_PROJECTION);					// indicate we are specifying camera transformations
-  glLoadIdentity();							// make sure transformation is "zero'd"
+  //glMatrixMode(GL_PROJECTION);					// indicate we are specifying camera transformations
+  //glLoadIdentity();							// make sure transformation is "zero'd"
 
-  glOrtho(-5, 5, -5, 5, -5, 5);
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+  //glOrtho(-5, 5, -5, 5, -5, 5);
+  //glMatrixMode(GL_MODELVIEW);
+  //glLoadIdentity();
   //glEnable(GL_LIGHTING); // turn on the lights, we have power!!!
 
-  //glTranslatef(0, 0, -10);
   //glScaled(.25, .25, 1); // make the scene smaller so we can see the damn thing
-  glRotated(ry, 1.0, 0.0, 0.0);
-  glRotated(rx, 0.0, 1.0, 0.0);
 
   //glColor3f(1.0f,0.5f,0.0f);          // setting the color to orange
  
-  //glutSolidTeapot(1);
+  glPushMatrix();
+  glTranslatef(0, 0, 0);
+  glRotated(ry, 1.0, 0.0, 0.0);
+  glRotated(rx, 0.0, 1.0, 0.0);
+
+  //glutSolidTeapot(2);
+  
+
   for( int i = 0; i < patches.size() ; i++ ) {
     patches[i].UniformSubdivide(1.0/10.0);
     //patches[i].UniformSubdivide(1.0);
     //patches[i].Draw();
   }
+
+  glPopMatrix();
  
   // This should be done before any other objects are shaded
   // so that other objects go on top of it
@@ -112,21 +127,44 @@ void myDisplay() {
  */
 void initlights(void)
 {
-  GLfloat ambient[] = {0.2, 0.2, 0.2, 1.0};
-  GLfloat position[] = {0.0, 0.0, 10.0, 1.0};
-  GLfloat mat_diffuse[] = {0.6, 0.6, 0.6, 1.0};
-  GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
+  GLfloat position[] = {0.0, 0.0, 20.0, 1.0};
+  GLfloat position1[] = {0.0, 10.0, 0.0, 1.0};
+  GLfloat position2[] = {0.0, 0.0, 10.0, 1.0};
+  GLfloat light_ambient[] = {0.2, 0.2, 0.2, 1.0};
+  GLfloat light_diffuse[] = {0.0, 0.6, 0.6, 1.0};
+  GLfloat light_specular[] = {1.0, 1.0, 0.0, 1.0};
+  GLfloat mat_diffuse[] = {0.0, 0.6, 0.6, 1.0};
+  GLfloat mat_specular[] = {1.0, 1.0, 0.0, 1.0};
+  //GLfloat mat_shininess[] = {50.0};
   GLfloat mat_shininess[] = {50.0};
 
   glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-
-  glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+  
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
   glLightfv(GL_LIGHT0, GL_POSITION, position);
-
+  //glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+  //glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+  //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+  //glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+  glEnable(GL_LIGHT0);
+/*
+ 
+  glEnable(GL_LIGHT1);
+  glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
+  glLightfv(GL_LIGHT1, GL_POSITION, position1);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
   glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+
+  glEnable(GL_LIGHT2);
+  glLightfv(GL_LIGHT2, GL_AMBIENT, ambient);
+  glLightfv(GL_LIGHT2, GL_POSITION, position2);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+  glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+*/
 }
 
 void parsePatch(ifstream &is) {
@@ -206,6 +244,34 @@ void processNormalKeys(unsigned char key, int x, int y) {
   }
   */
 }
+void initGL()
+{
+  // enable /disable features
+  //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+  //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+  glEnable(GL_DEPTH_TEST);
+  //glEnable(GL_LIGHTING);
+  //glEnable(GL_TEXTURE_2D);
+  //glEnable(GL_CULL_FACE);
+
+  // track material ambient and diffuse from surface color, call it before glEnable(GL_COLOR_MATERIAL)
+  //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+  //glEnable(GL_COLOR_MATERIAL);
+
+  //glClearColor(0, 0, 0, 0);                   // background color
+  //glClearStencil(0);                          // clear stencil buffer
+  glClearDepth(1.0f);                         // 0 is near, 1 is far
+  //glDepthFunc(GL_LEQUAL);
+  initlights();
+  
+  //set camera
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0);
+
+}
+
 
 //****************************************************
 // the usual stuff, nothing exciting here
@@ -230,7 +296,7 @@ int main(int argc, char *argv[]) {
   glutInit(&argc, argv);
 
   //This tells glut to use a double-buffered window with red, green, and blue channels 
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
   // Initalize theviewport size
   viewport.w = 600;
@@ -248,8 +314,8 @@ int main(int argc, char *argv[]) {
   glutMouseFunc(processMouse);
   */
   initScene();							// quick function to set up scene
-  initlights();
-
+  initGL();
+  
   glutMotionFunc(MouseMotion);
   glutMouseFunc(processMouse);
   glutDisplayFunc(myDisplay);					// function to run when its time to draw something

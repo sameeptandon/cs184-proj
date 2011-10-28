@@ -28,6 +28,7 @@ void BezierPatch::Draw() {
 // and a parametric value, return the curve 
 // point and derivative
 void BezierPatch::CurveInterp(vector<Vector3d> curve, double u, Vector3d &p, Vector3d &dPdu) {
+  assert(u >= 0.0 && u <= 1.0);
   // first, split each of the three segments
   // to form two new ones AB and BC
   Vector3d A = curve[0] * (1.0-u) + curve[1] * u;
@@ -61,12 +62,11 @@ void BezierPatch::PatchInterp(double u, double v, Vector3d &p, Vector3d &n) {
   CurveInterp(vcurve, v, vpt, vtang);
   CurveInterp(ucurve, u, upt, utang);
   // take cross product of partials to find normal
-  n = utang.cross(vtang).normalized(); 
-  if( ((int) n.norm()) != 1 ) {
-    // cout << n.norm() << endl;
-  }
-  assert((upt-vpt).norm() < 0.001);
+  assert((upt-vpt).norm() < 0.00001);
   p = upt;
+
+  n = (utang.cross(vtang));
+  n = n.normalized();
 }
 
 // given a patch, perform uniform subdivision
@@ -105,9 +105,11 @@ void BezierPatch::UniformSubdivide(double step) {
       // evaluate surface
       PatchInterp(u, v, ptul, normalul);
       PatchInterp(upp, v, ptur, normalur);
-      glNormal3d(normalul(0), normalul(1), normalul(2));
+      if (!(isnan(normalul(0)) || isnan(normalul(1)) || isnan(normalul(2))))
+        glNormal3d(normalul(0), normalul(1), normalul(2));
       glVertex3d(ptul(0), ptul(1), ptul(2));
-      glNormal3d(normalur(0), normalur(1), normalur(2));
+      if (!(isnan(normalur(0)) || isnan(normalur(1)) || isnan(normalur(2))))
+        glNormal3d(normalur(0), normalur(1), normalur(2));
       glVertex3d(ptur(0), ptur(1), ptur(2));
       ptll = ptul;
       ptlr = ptur;
