@@ -41,6 +41,9 @@ bool wireFrame = false;
 
 int rx = 0;
 int ry = 0;
+double tx = 0;
+double ty = 0;
+double tz = 0;
 int pressed_mouse_button; // get mouse button state
 
 void initScene(){
@@ -111,7 +114,7 @@ void myDisplay() {
   //glColor3f(1.0f,0.5f,0.0f);          // setting the color to orange
  
   glPushMatrix();
-  glTranslatef(0, 0, 0);
+  glTranslatef(tx, ty, tz);
   glRotated(ry, 1.0, 0.0, 0.0);
   glRotated(rx, 0.0, 1.0, 0.0);
 
@@ -256,17 +259,53 @@ void processNormalKeys(unsigned char key, int x, int y) {
     smoothShading = !smoothShading;
   if (key == 'w')
     wireFrame = !wireFrame; 
+  if (key == '+') 
+    tz += 1;
+  if (key == '-' || key == '_')
+    tz -= 1;
 
   glutPostRedisplay();
-  /*
-  if ( key == 'x') {
-    for (int i = 0; i < pl_pos.size(); i++) {
-      cout << "-pl " << pl_pos[i].transpose() << " " << pl_color[i].transpose() << " ";
-    }
-    cout << endl; 
-  }
-  */
 }
+
+void processSpecialKeys(int key, int x, int y) {
+  int mod = glutGetModifiers();
+  bool shift = false; 
+  if (mod == GLUT_ACTIVE_SHIFT) {
+    shift = true; 
+  }
+
+  if (shift) { 
+    if (key == GLUT_KEY_LEFT) {
+      tx -= 0.25;
+    }
+    if (key == GLUT_KEY_RIGHT) { 
+      tx += 0.25;
+    }
+    if (key == GLUT_KEY_DOWN) { 
+      ty += 0.25; 
+    }
+    if (key == GLUT_KEY_UP) { 
+      ty -= 0.25;
+    }
+  }
+  else {
+    if (key == GLUT_KEY_LEFT) {
+      rx -= 10;
+    }
+    if (key == GLUT_KEY_RIGHT) { 
+      rx += 10;
+    }
+    if (key == GLUT_KEY_DOWN) { 
+      ry += 10; 
+    }
+    if (key == GLUT_KEY_UP) { 
+      ry -= 10;
+    }
+  }
+  glutPostRedisplay();
+
+}
+
 void initGL()
 {
   // enable /disable features
@@ -334,6 +373,7 @@ int main(int argc, char *argv[]) {
 
   //Exit on spacebar
   glutKeyboardFunc(processNormalKeys);
+  glutSpecialFunc(processSpecialKeys);
   /*
    * glutMotionFunc(MouseMotion);
   glutMouseFunc(processMouse);
