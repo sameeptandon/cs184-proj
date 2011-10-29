@@ -55,10 +55,13 @@ clean:
 #-----------------------------------------
 #-----------------------------------------
 
-bezier: Bezier.cpp BezierPatch.o Globals.h
-	$(CC) Bezier.cpp BezierPatch.o $(LDOPTS) -o bezier
+bezier: Bezier.cpp BezierPatch.o Globals.h Triangle.o
+	$(CC) Bezier.cpp BezierPatch.o Triangle.o $(LDOPTS) -o bezier
 
 BezierPatch.o: BezierPatch.cpp Globals.h
 	$(CC) BezierPatch.cpp -c $(CCOPTS)
+
+Triangle.o: Triangle.cpp Triangle.h Globals.h
+	$(CC) Triangle.cpp -c $(CCOPTS)
 #export LD_LIBRARY_PATH="/usr/sww/pkg/Mesa/lib:/usr/lib:/usr/sww/lib"
 

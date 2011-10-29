@@ -39,14 +39,13 @@ int last_y = 0;
 bool smoothShading = true;
 bool wireFrame = false;
 double subdivParam;
-bool wireFrame = false; 
 
 Vector3d max_v = Vector3d(-9999999, -9999999, -999999);
 Vector3d min_v = Vector3d(9999999, 99999999, 99999999); 
 
 int rx = 0;
 int ry = 0;
-doubletx = 0;
+double tx = 0;
 double ty = 0;
 double tz = 1;
 int pressed_mouse_button; // get mouse button state
@@ -359,7 +358,6 @@ void initGL()
 int main(int argc, char *argv[]) {
 
   parsePatches(argv[1]);
-<<<<<<< HEAD
   subdivParam = atof(argv[2]);
   if(argc >= 4) {
     if(strcmp("-a", argv[3])==0) {
@@ -367,9 +365,6 @@ int main(int argc, char *argv[]) {
     }
   }
   usage();
-=======
-  
->>>>>>> 651b826c39caefac395caf463e3eb4ffc4e514a0
   /*
   // Read command line arguments
   int i = 0;
