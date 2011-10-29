@@ -62,11 +62,30 @@ void BezierPatch::PatchInterp(double u, double v, Vector3d &p, Vector3d &n) {
   CurveInterp(vcurve, v, vpt, vtang);
   CurveInterp(ucurve, u, upt, utang);
   // take cross product of partials to find normal
-  assert((upt-vpt).norm() < 0.00001);
-  p = upt;
 
   n = (utang.cross(vtang));
   n = n.normalized();
+
+  //repair bad normals
+  for (int i = 0; i < 3; i++) {
+    if(isnan(n(i))) {
+      for (int j = 0; j < 3; j++) { 
+        if (vtang(j) != 0) { 
+          cout << "utang: " << utang.transpose() << endl; 
+          cout << "vtang: " << vtang.transpose() << endl;
+        }
+      }
+      if (u < 1.0 || v < 1.0) { 
+        PatchInterp(min(u+0.00001, 1.0) , min(v+0.00001,1.0), p, n);
+      } else { 
+        PatchInterp(0, 0, p, n);
+      }
+      break;
+    }
+  }
+
+  assert((upt-vpt).norm() < 0.00001);
+  p = upt;
 }
 
 // given a patch, perform uniform subdivision
@@ -91,12 +110,15 @@ void BezierPatch::UniformSubdivide(double step) {
   glEnd();
   */
   // for each parametric value of u
+
   for (int iu = 0; iu < numdiv; iu++) {
-    glBegin(GL_QUAD_STRIP);
+    //glBegin(GL_QUAD_STRIP);
     //glBegin(GL_POINTS);
     double u = iu * step;
     double upp = (iu+1) * step;
 
+    vector<Vector3d> points;
+    vector<Vector3d> normals; 
     // for each parametric value of v
     for (int iv = 0; iv <= numdiv; iv++) {
       double v = iv * step;
@@ -105,18 +127,32 @@ void BezierPatch::UniformSubdivide(double step) {
       // evaluate surface
       PatchInterp(u, v, ptul, normalul);
       PatchInterp(upp, v, ptur, normalur);
-      if (!(isnan(normalul(0)) || isnan(normalul(1)) || isnan(normalul(2))))
-        glNormal3d(normalul(0), normalul(1), normalul(2));
-      glVertex3d(ptul(0), ptul(1), ptul(2));
-      if (!(isnan(normalur(0)) || isnan(normalur(1)) || isnan(normalur(2))))
-        glNormal3d(normalur(0), normalur(1), normalur(2));
-      glVertex3d(ptur(0), ptur(1), ptur(2));
+      //if (!(isnan(normalul(0)) || isnan(normalul(1)) || isnan(normalul(2))))
+      
+      points.push_back(ptul);
+      normals.push_back(normalul);
+      points.push_back(ptur);
+      normals.push_back(normalur);
+
+      //glNormal3d(normalul(0), normalul(1), normalul(2));
+      //glVertex3d(ptul(0), ptul(1), ptul(2));
+      //if (!(isnan(normalur(0)) || isnan(normalur(1)) || isnan(normalur(2))))
+      //glNormal3d(normalur(0), normalur(1), normalur(2));
+      //glVertex3d(ptur(0), ptur(1), ptur(2));
       ptll = ptul;
       ptlr = ptur;
       normalll = normalul;
       normallr = normalur;
     }
 
+    //glEnd();
+    glBegin(GL_QUAD_STRIP);
+    //Vector3d lastValidNormal = Vector3d(0,0,0);
+    for (int i = 0; i < points.size(); i++) {
+      glNormal3d(normals[i](0), normals[i](1), normals[i](2));
+      glVertex3d(points[i](0), points[i](1), points[i](2));
+
+    }
     glEnd();
   }
 

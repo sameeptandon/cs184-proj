@@ -35,6 +35,9 @@ vector<BezierPatch> patches;
 bool save = false;
 int last_x = 0;
 int last_y = 0;
+bool smoothShading = true;
+bool wireFrame = false; 
+
 
 int rx = 0;
 int ry = 0;
@@ -78,6 +81,20 @@ void myReshape(int w, int h) {
 // function that does the actual drawing of stuff
 //***************************************************
 void myDisplay() {
+  if(!smoothShading) { 
+    glDisable(GL_FLAT);
+    glEnable(GL_FLAT);
+    glShadeModel(GL_FLAT);
+  } else {
+    glDisable(GL_FLAT);
+    glEnable(GL_SMOOTH);
+    glShadeModel(GL_SMOOTH);
+  }
+  if (!wireFrame) { 
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+  } else {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  } 
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);				// clear the color buffer
 
@@ -100,9 +117,8 @@ void myDisplay() {
 
   //glutSolidTeapot(2);
   
-
   for( int i = 0; i < patches.size() ; i++ ) {
-    patches[i].UniformSubdivide(1.0/10.0);
+    patches[i].UniformSubdivide(1.0/20.0);
     //patches[i].UniformSubdivide(1.0);
     //patches[i].Draw();
   }
@@ -235,6 +251,12 @@ void usage() {
 void processNormalKeys(unsigned char key, int x, int y) {
   if( key == 32 )
     exit(0);
+  if (key == 's') 
+    smoothShading = !smoothShading;
+  if (key == 'w')
+    wireFrame = !wireFrame; 
+
+  glutPostRedisplay();
   /*
   if ( key == 'x') {
     for (int i = 0; i < pl_pos.size(); i++) {
@@ -251,6 +273,8 @@ void initGL()
   //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
   //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
   glEnable(GL_DEPTH_TEST);
+
+
   //glEnable(GL_LIGHTING);
   //glEnable(GL_TEXTURE_2D);
   //glEnable(GL_CULL_FACE);
