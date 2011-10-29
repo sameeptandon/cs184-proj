@@ -39,12 +39,16 @@ int last_y = 0;
 bool smoothShading = true;
 bool wireFrame = false;
 double subdivParam;
+bool wireFrame = false; 
+
+Vector3d max_v = Vector3d(-9999999, -9999999, -999999);
+Vector3d min_v = Vector3d(9999999, 99999999, 99999999); 
 
 int rx = 0;
 int ry = 0;
 doubletx = 0;
 double ty = 0;
-double tz = 0;
+double tz = 1;
 int pressed_mouse_button; // get mouse button state
 
 void initScene(){
@@ -115,7 +119,8 @@ void myDisplay() {
   //glColor3f(1.0f,0.5f,0.0f);          // setting the color to orange
  
   glPushMatrix();
-  glTranslatef(tx, ty, tz);
+  glScaled(tz,tz,tz);
+  glTranslated(tx, ty, 0);
   glRotated(-ry, 1.0, 0.0, 0.0);
   glRotated(rx, 0.0, 1.0, 0.0);
 
@@ -196,6 +201,10 @@ void parsePatch(ifstream &is) {
   do {
     is >> z >> x >> y;
     v = Vector3d(x,y,z);
+    for (int j = 0; j < 3; j++) { 
+      min_v(j) = min(min_v(j), v(j));
+      max_v(j) = max(max_v(j), v(j));
+    }
   } while( bp.AddPoint(v) );
   patches.push_back(bp);
 }
@@ -267,9 +276,9 @@ void processNormalKeys(unsigned char key, int x, int y) {
   if (key == 'a')
      adaptive = !adaptive; 
   if (key == '+') 
-    tz += 1;
+    tz *= 1.1;
   if (key == '-' || key == '_')
-    tz -= 1;
+    tz /= 1.1;
 
   glutPostRedisplay();
 }
@@ -339,7 +348,7 @@ void initGL()
   //set camera
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0);
+  gluLookAt(0, 0, max_v(2) + 5, (max_v(0)/2) + min_v(0)/2, (max_v(1)/2) + min_v(1)/2,(max_v(2)/2) + min_v(2)/2, 0, 1, 0);
 
 }
 
@@ -350,6 +359,7 @@ void initGL()
 int main(int argc, char *argv[]) {
 
   parsePatches(argv[1]);
+<<<<<<< HEAD
   subdivParam = atof(argv[2]);
   if(argc >= 4) {
     if(strcmp("-a", argv[3])==0) {
@@ -357,6 +367,9 @@ int main(int argc, char *argv[]) {
     }
   }
   usage();
+=======
+  
+>>>>>>> 651b826c39caefac395caf463e3eb4ffc4e514a0
   /*
   // Read command line arguments
   int i = 0;
