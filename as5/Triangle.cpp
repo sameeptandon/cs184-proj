@@ -7,6 +7,7 @@ Triangle::Triangle(Vector3d a, Vector3d b, Vector3d c) :
   
   //precompute normal 
   _normal = (_b-_a).cross(_c-_a);
+  _normal = -_normal.normalized();
 };
 
 Triangle::~Triangle() {};

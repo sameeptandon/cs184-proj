@@ -10,6 +10,7 @@
 #include "Globals.h"
 #include "BezierPatch.h"
 #include "FileWriter.h"
+#include "Triangle.h"
 
 static struct timeval lastTime;
 
@@ -32,6 +33,7 @@ class Viewport {
 //****************************************************
 Viewport	viewport;
 vector<BezierPatch> patches;
+vector<Triangle> triangles;
 bool save = false;
 bool adaptive = false;
 int last_x = 0;
@@ -136,6 +138,10 @@ void myDisplay() {
     //patches[i].Draw();
   }
 
+  for (int i = 0; i < triangles.size() ; i++ ) {
+    triangles[i].Draw();
+  }
+
   glPopMatrix();
  
   // This should be done before any other objects are shaded
@@ -175,22 +181,24 @@ void initlights(void)
   //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
   //glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
   glEnable(GL_LIGHT0);
-/*
  
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+  glLightfv(GL_LIGHT2, GL_POSITION, position1);
+  //glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+  //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+  //glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
   glEnable(GL_LIGHT1);
-  glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
-  glLightfv(GL_LIGHT1, GL_POSITION, position1);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-  glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
-  glEnable(GL_LIGHT2);
-  glLightfv(GL_LIGHT2, GL_AMBIENT, ambient);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
   glLightfv(GL_LIGHT2, GL_POSITION, position2);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-  glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-*/
+  //glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+  //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+  //glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+  glEnable(GL_LIGHT2);
 }
 
 void parsePatch(ifstream &is) {
@@ -208,9 +216,46 @@ void parsePatch(ifstream &is) {
   patches.push_back(bp);
 }
 
+void parseObj(char* filename) {
+  ifstream in(filename, ifstream::in);
+  if(!in) {
+    cout << "Could not open given file name " << filename << endl;
+    exit(1);
+  }
+  char c;
+  double x,y,z;
+  int i1, i2, i3;
+  vector<Vector3d> vertices;
+  Vector3d v;
+  while(true) {
+    in >> c;
+    if(!in.good()) break;
+    switch(c) {
+      case 'v':
+        in >> x >> y >> z;
+        v = Vector3d(x,y,z);
+        vertices.push_back(v);
+        for (int j = 0; j < 3; j++) { 
+          min_v(j) = min(min_v(j), v(j));
+          max_v(j) = max(max_v(j), v(j));
+        }
+        // cout << "Adding vertex at " << transformed.transpose() << endl;
+        break;
+      case 'f':
+        in >> i1 >> i2 >> i3;
+        triangles.push_back(Triangle(
+              vertices[i1-1],
+              vertices[i2-1],
+              vertices[i3-1]
+              ));
+        break;
+    }
+  }
+  in.close();
+}
 void MouseMotion(int x, int y)
 {
-  
+
   rx += x - last_x;
   ry += last_y - y;
 
@@ -351,13 +396,31 @@ void initGL()
 
 }
 
+//Code taken from: http://stackoverflow.com/questions/1711095/parse-out-the-file-extension-from-a-file-path-in-c
+int endswith(const char* haystack, const char* needle)
+{
+  size_t hlen;
+  size_t nlen;
+  /* find the length of both arguments - 
+   *     if needle is longer than haystack, haystack can't end with needle */
+  hlen = strlen(haystack); 
+  nlen = strlen(needle);
+  if(nlen > hlen) return 0;
+
+  /* see if the end of haystack equals needle */
+  return (strcmp(&haystack[hlen-nlen], needle)) == 0;
+}
 
 //****************************************************
 // the usual stuff, nothing exciting here
 //****************************************************
 int main(int argc, char *argv[]) {
-
-  parsePatches(argv[1]);
+  
+  if (endswith(argv[1], "bez")) {
+    parsePatches(argv[1]);
+  } else if (endswith(argv[1], "obj")) {
+    parseObj(argv[1]);
+  }
   subdivParam = atof(argv[2]);
   if(argc >= 4) {
     if(strcmp("-a", argv[3])==0) {
