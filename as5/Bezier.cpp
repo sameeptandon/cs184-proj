@@ -33,9 +33,12 @@ class Viewport {
 Viewport	viewport;
 vector<BezierPatch> patches;
 bool save = false;
+bool adaptive = false;
 int last_x = 0;
 int last_y = 0;
 bool smoothShading = true;
+bool wireFrame = false;
+double subdivParam;
 bool wireFrame = false; 
 
 Vector3d max_v = Vector3d(-9999999, -9999999, -999999);
@@ -43,7 +46,7 @@ Vector3d min_v = Vector3d(9999999, 99999999, 99999999);
 
 int rx = 0;
 int ry = 0;
-double tx = 0;
+doubletx = 0;
 double ty = 0;
 double tz = 1;
 int pressed_mouse_button; // get mouse button state
@@ -118,14 +121,18 @@ void myDisplay() {
   glPushMatrix();
   glScaled(tz,tz,tz);
   glTranslated(tx, ty, 0);
-  glRotated(ry, 1.0, 0.0, 0.0);
+  glRotated(-ry, 1.0, 0.0, 0.0);
   glRotated(rx, 0.0, 1.0, 0.0);
 
   //glutSolidTeapot(2);
   
   for( int i = 0; i < patches.size() ; i++ ) {
-    patches[i].AdaptiveSubdivide(0.01);
-    //patches[i].UniformSubdivide(1.0/20.0);
+    if(adaptive) {
+      patches[i].AdaptiveSubdivide(subdivParam);
+    }
+    else {
+      patches[i].UniformSubdivide(subdivParam);
+    }
     //patches[i].UniformSubdivide(1.0);
     //patches[i].Draw();
   }
@@ -145,9 +152,6 @@ void myDisplay() {
 }
 
 
-/*
- * Stole code from: 
- */
 void initlights(void)
 {
   GLfloat position[] = {0.0, 0.0, 20.0, 1.0};
@@ -255,8 +259,11 @@ void printPatches() {
 }
 
 void usage() {
-  cout << "Usage is undefined";
-  exit(0);
+  cout << "Press w to switch to/from wireframe mode" << endl;
+  cout << "      s to switch between shading modes" << endl;
+  cout << "      a to switch between subdivision modes" << endl;
+  cout << "      +- to zoom" << endl;
+  cout << "      shift+arrow keys to move the camera" << endl;
 }
 
 void processNormalKeys(unsigned char key, int x, int y) {
@@ -266,6 +273,8 @@ void processNormalKeys(unsigned char key, int x, int y) {
     smoothShading = !smoothShading;
   if (key == 'w')
     wireFrame = !wireFrame; 
+  if (key == 'a')
+     adaptive = !adaptive; 
   if (key == '+') 
     tz *= 1.1;
   if (key == '-' || key == '_')
@@ -350,7 +359,17 @@ void initGL()
 int main(int argc, char *argv[]) {
 
   parsePatches(argv[1]);
+<<<<<<< HEAD
+  subdivParam = atof(argv[2]);
+  if(argc >= 4) {
+    if(strcmp("-a", argv[3])==0) {
+      adaptive = true;
+    }
+  }
+  usage();
+=======
   
+>>>>>>> 651b826c39caefac395caf463e3eb4ffc4e514a0
   /*
   // Read command line arguments
   int i = 0;
