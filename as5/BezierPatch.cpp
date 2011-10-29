@@ -157,3 +157,85 @@ void BezierPatch::UniformSubdivide(double step) {
   }
 
 }
+
+void BezierPatch::AdaptiveSubdivide(double tau) {
+  Vector2d ll = Vector2d(0,0);
+  Vector2d lr = Vector2d(1,0);
+  Vector2d ul = Vector2d(0,1);
+  Vector2d ur = Vector2d(1,1);
+  AdaptiveSubdivideHelper(tau, ll, lr, ur);
+  AdaptiveSubdivideHelper(tau, ll, ul, ur);
+}
+
+void BezierPatch::AdaptiveSubdivideHelper(double tau, Vector2d &u1, Vector2d &u2, Vector2d &u3) {
+  Vector3d x1, x2, x3;
+  Vector3d n1, n2, n3;
+  PatchInterp( u1(0), u1(1), x1, n1 );
+  PatchInterp( u2(0), u2(1), x2, n2 );
+  PatchInterp( u3(0), u3(1), x3, n3 );
+  Vector2d u12 = (u1+u2)/2;
+  Vector2d u23 = (u2+u3)/2;
+  Vector2d u31 = (u3+u1)/2;
+
+  Vector3d x12 = (x1+x2)/2;
+  Vector3d x23 = (x2+x3)/2;
+  Vector3d x31 = (x3+x1)/2;
+
+  Vector3d x_u12, x_u23, x_u31;
+  Vector3d n_u12, n_u23, n_u31;
+  PatchInterp( u12(0), u12(1), x_u12, n_u12 );
+  PatchInterp( u23(0), u23(1), x_u23, n_u23 );
+  PatchInterp( u31(0), u31(1), x_u31, n_u31 );
+
+  int e1 = (x_u31-x31).norm() > tau;
+  int e2 = (x_u12-x12).norm() > tau;
+  int e3 = (x_u23-x23).norm() > tau;
+
+  char e321 = (e1 & 0x01) + ((e2 << 1) & 0x02) + ((e3 << 2) & 0x04);
+
+  switch(e321) {
+    case 0b000:
+      glBegin(GL_TRIANGLES);
+      glNormal3d(n1(0), n1(1), n1(2));
+      glVertex3d(x1(0), x1(1), x1(2));
+      glNormal3d(n2(0), n2(1), n2(2));
+      glVertex3d(x2(0), x2(1), x2(2));
+      glNormal3d(n3(0), n3(1), n3(2));
+      glVertex3d(x3(0), x3(1), x3(2));
+      glEnd();
+      break;
+    case 0b001:
+      AdaptiveSubdivideHelper(tau, u1, u2, u31);
+      AdaptiveSubdivideHelper(tau, u2, u3, u31);
+      break;
+    case 0b010:
+      AdaptiveSubdivideHelper(tau, u1, u3, u12);
+      AdaptiveSubdivideHelper(tau, u2, u3, u12);
+      break;
+    case 0b100:
+      AdaptiveSubdivideHelper(tau, u1, u2, u23);
+      AdaptiveSubdivideHelper(tau, u1, u3, u23);
+      break;
+    case 0b011:
+      AdaptiveSubdivideHelper(tau, u12, u3, u2);
+      AdaptiveSubdivideHelper(tau, u12, u31, u3);
+      AdaptiveSubdivideHelper(tau, u1, u12, u31);
+      break;
+    case 0b110:
+      AdaptiveSubdivideHelper(tau, u2, u23, u12);
+      AdaptiveSubdivideHelper(tau, u1, u23, u12);
+      AdaptiveSubdivideHelper(tau, u1, u3, u23);
+      break;
+    case 0b101:
+      AdaptiveSubdivideHelper(tau, u1, u2, u31);
+      AdaptiveSubdivideHelper(tau, u2, u31, u23);
+      AdaptiveSubdivideHelper(tau, u31, u23, u3);
+      break;
+    case 0b111:
+      AdaptiveSubdivideHelper(tau, u1, u31, u12);
+      AdaptiveSubdivideHelper(tau, u2, u23, u12);
+      AdaptiveSubdivideHelper(tau, u3, u31, u23);
+      AdaptiveSubdivideHelper(tau, u12, u23, u31);
+      break;
+  }
+}

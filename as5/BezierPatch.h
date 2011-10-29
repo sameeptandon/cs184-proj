@@ -24,6 +24,8 @@ class BezierPatch {
     void UniformSubdivide(double step);
     void PatchInterp(double u, double v, Vector3d &p, Vector3d &n);
     void CurveInterp(vector<Vector3d> curve, double u, Vector3d &p, Vector3d &dPdu);
+    void AdaptiveSubdivideHelper(double tau, Vector2d &u1, Vector2d &u2, Vector2d &u3);
+    void AdaptiveSubdivide(double tau);
   private:
     int x;
     int y; // Keep track of control points added

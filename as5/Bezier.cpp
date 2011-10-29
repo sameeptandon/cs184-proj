@@ -82,7 +82,7 @@ void myReshape(int w, int h) {
 //***************************************************
 void myDisplay() {
   if(!smoothShading) { 
-    glDisable(GL_FLAT);
+    glDisable(GL_SMOOTH);
     glEnable(GL_FLAT);
     glShadeModel(GL_FLAT);
   } else {
@@ -91,7 +91,7 @@ void myDisplay() {
     glShadeModel(GL_SMOOTH);
   }
   if (!wireFrame) { 
-    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   } else {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   } 
@@ -118,7 +118,8 @@ void myDisplay() {
   //glutSolidTeapot(2);
   
   for( int i = 0; i < patches.size() ; i++ ) {
-    patches[i].UniformSubdivide(1.0/20.0);
+    patches[i].AdaptiveSubdivide(0.01);
+    //patches[i].UniformSubdivide(1.0/20.0);
     //patches[i].UniformSubdivide(1.0);
     //patches[i].Draw();
   }
