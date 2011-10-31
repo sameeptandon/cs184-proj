@@ -2,11 +2,13 @@
 #define _BEZIERPATCH_H_
 
 #include "Globals.h"
+#include "Triangle.h"
 
 class BezierPatch {
   public:
     vector< vector<Vector3d> > controlPointsUV; 
-    vector< vector<Vector3d> > controlPointsVU; 
+    vector< vector<Vector3d> > controlPointsVU;
+    vector<Triangle> triangles;
     BezierPatch() {
       for( int i = 0; i < 4; i++ ) {
         vector<Vector3d> v;
@@ -18,6 +20,7 @@ class BezierPatch {
       }
       x = 0;
       y = 0;
+      firstTime = true;
     }
     bool AddPoint(Vector3d &point);
     void Draw();
@@ -29,6 +32,7 @@ class BezierPatch {
   private:
     int x;
     int y; // Keep track of control points added
+    bool firstTime;
 };
 
 #endif

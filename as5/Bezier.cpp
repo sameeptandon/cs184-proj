@@ -13,7 +13,7 @@
 #include "Triangle.h"
 
 static struct timeval lastTime;
-
+void writeToObj();
 using namespace std;
 
 //****************************************************
@@ -34,6 +34,7 @@ class Viewport {
 Viewport	viewport;
 vector<BezierPatch> patches;
 vector<Triangle> triangles;
+vector<Triangle> trianglesOut;
 bool save = false;
 bool adaptive = false;
 int last_x = 0;
@@ -42,6 +43,7 @@ bool smoothShading = true;
 bool wireFrame = false;
 bool hiddenLineRemoval = false;
 double subdivParam;
+bool writeout = false;
 
 Vector3d max_v = Vector3d(-9999999, -9999999, -999999);
 Vector3d min_v = Vector3d(9999999, 99999999, 99999999); 
@@ -52,6 +54,8 @@ double tx = 0;
 double ty = 0;
 double tz = 1;
 int pressed_mouse_button; // get mouse button state
+
+char outfile[512];
 
 void initScene(){
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear to black, fully transparent
@@ -168,6 +172,10 @@ void myDisplay() {
     char filename[256];
     sprintf(filename, "output.png");
     save_opengl_image(viewport.w, viewport.h, filename);
+    exit(0);
+  }
+  if( writeout ) {
+    writeToObj();
     exit(0);
   }
 }
@@ -288,8 +296,29 @@ void processMouse(int button, int state, int x, int y) {
       last_y = y;
     }
   }
+}
 
+void writeToObj() {
+  static bool firstTime = true;
+  ofstream of (outfile, ios::out);
+  
+  if(firstTime) {
+    trianglesOut.insert(trianglesOut.end(), triangles.begin(), triangles.end());
+    for( int i = 0; i < patches.size(); i++ ) {
+      trianglesOut.insert(trianglesOut.end(), patches[i].triangles.begin(), patches[i].triangles.end());
+    }
+  }
 
+  for( int i = 0; i < trianglesOut.size(); i++ ) {
+    of << "v " << trianglesOut[i]._a(0) << " " << trianglesOut[i]._a(1) << " " << trianglesOut[i]._a(2) << endl;
+    of << "v " << trianglesOut[i]._b(0) << " " << trianglesOut[i]._b(1) << " " << trianglesOut[i]._b(2) << endl;
+    of << "v " << trianglesOut[i]._c(0) << " " << trianglesOut[i]._c(1) << " " << trianglesOut[i]._c(2) << endl;
+  }
+  for( int i = 0; i < trianglesOut.size(); i++ ) {
+    of << "f " << 3*i+1 << " " << 3*i+2 << " " << 3*i+3 << endl;
+  }
+  of.close();
+  firstTime = false;
 }
 
 /*
@@ -429,35 +458,47 @@ int endswith(const char* haystack, const char* needle)
   return (strcmp(&haystack[hlen-nlen], needle)) == 0;
 }
 
+void help(void) {
+  cout << "./bezier <.bez or .obj file> <subdiv param> -a -o <output obj>" << endl;
+  exit(0);
+}
+
 //****************************************************
 // the usual stuff, nothing exciting here
 //****************************************************
 int main(int argc, char *argv[]) {
-  
+  if (argc < 2) {
+    help();
+  }
+
   if (endswith(argv[1], "bez")) {
     parsePatches(argv[1]);
   } else if (endswith(argv[1], "obj")) {
     parseObj(argv[1]);
   }
-  subdivParam = atof(argv[2]);
-  if(argc >= 4) {
-    if(strcmp("-a", argv[3])==0) {
+  if(argc >=3)
+    subdivParam = atof(argv[2]);
+  else
+    subdivParam = 0.1;
+
+  usage();
+  // Read command line arguments
+  int i = 3;
+  while(i+1 <= argc) {
+    if (strcmp(argv[i], "-a")==0) {
       adaptive = true;
     }
-  }
-  usage();
-  /*
-  // Read command line arguments
-  int i = 0;
-  while(++i != argc) {
-    if (strcmp(argv[i], "-blah")==0) {
-      cout << "blah." << endl;
+    else if (strcmp(argv[i], "-o")==0 && i+1 < argc) {
+      strncpy(outfile, argv[i+1], 511);
+      outfile[511] = '\0';
+      writeout = true;
+      i++;
     }
     else {
-      usage();
+      continue;
     }
+    i++;
   }
-  */
 
   //This initializes glut
   glutInit(&argc, argv);
