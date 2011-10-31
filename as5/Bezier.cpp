@@ -56,6 +56,7 @@ double tz = 1;
 int pressed_mouse_button; // get mouse button state
 
 char outfile[512];
+char outputfile[256];
 
 void initScene(){
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear to black, fully transparent
@@ -169,9 +170,7 @@ void myDisplay() {
   glFlush();
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
   if( save ) {
-    char filename[256];
-    sprintf(filename, "output.png");
-    save_opengl_image(viewport.w, viewport.h, filename);
+    save_opengl_image(viewport.w, viewport.h, outputfile);
     exit(0);
   }
   if( writeout ) {
@@ -356,10 +355,22 @@ void usage() {
 }
 
 void processNormalKeys(unsigned char key, int x, int y) {
+  int mod = glutGetModifiers();
+  bool ctrl = false;
+  if (mod == GLUT_ACTIVE_CTRL) {
+    ctrl = true;
+  }
+  if (ctrl) {
+    if (key+96 == 's') {
+      save = true;
+    }
+  }
+  else {
+    if (key == 's') 
+      smoothShading = !smoothShading;
+  }
   if( key == 32 )
     exit(0);
-  if (key == 's') 
-    smoothShading = !smoothShading;
   if (key == 'w')
     wireFrame = !wireFrame; 
   if (key == 'h')
@@ -370,7 +381,7 @@ void processNormalKeys(unsigned char key, int x, int y) {
     tz *= 1.1;
   if (key == '-' || key == '_')
     tz /= 1.1;
-
+ 
   glutPostRedisplay();
 }
 
@@ -494,11 +505,18 @@ int main(int argc, char *argv[]) {
       writeout = true;
       i++;
     }
+    else if (strcmp(argv[i], "-out")==0 && i + 1 < argc) {
+      strncpy(outputfile, argv[i+1], 255);
+      outputfile[255] = '\0';
+      i += 1;
+    }
+ 
     else {
       continue;
     }
     i++;
   }
+
 
   //This initializes glut
   glutInit(&argc, argv);
