@@ -342,10 +342,10 @@ void processSpecialKeys(int key, int x, int y) {
       tx += 0.25;
     }
     if (key == GLUT_KEY_DOWN) { 
-      ty += 0.25; 
+      ty -= 0.25; 
     }
     if (key == GLUT_KEY_UP) { 
-      ty -= 0.25;
+      ty += 0.25;
     }
   }
   else {
