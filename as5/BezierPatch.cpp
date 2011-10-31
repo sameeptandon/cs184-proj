@@ -201,7 +201,8 @@ void BezierPatch::AdaptiveSubdivideHelper(double tau, Vector2d &u1, Vector2d &u2
 
   char e321 = (e1 & 0x01) + ((e2 << 1) & 0x02) + ((e3 << 2) & 0x04);
   
-  Triangle t = Triangle(x1, x2, x3);
+  Triangle t1 = Triangle(x1, x2, x3);
+  Triangle t2 = Triangle(x2, x1, x3);
 
   switch(e321) {
     case 0b000:
@@ -214,7 +215,12 @@ void BezierPatch::AdaptiveSubdivideHelper(double tau, Vector2d &u1, Vector2d &u2
       glVertex3d(x3(0), x3(1), x3(2));
       glEnd();
       if(firstTime) {
-        triangles.push_back(t);
+        if( ((x2-x1).cross(x3-x1) - n1).norm() < ((x1-x2).cross(x3-x1) - n1).norm() ) {
+          triangles.push_back(t2);
+        }
+        else {
+          triangles.push_back(t1);
+        }
       }
       break;
     case 0b001:
