@@ -151,7 +151,7 @@ void BezierPatch::UniformSubdivide(double step) {
     for (int i = 0; i < points.size(); i++) {
       if(firstTime) {
         if(i % 2 == 0 && (i+3) < points.size()) {
-          Triangle t1 = Triangle(points[ i ], points[i+1], points[i+2]);
+          Triangle t1 = Triangle(points[i+2], points[i+1], points[i]);
           Triangle t2 = Triangle(points[i+1], points[i+2], points[i+3]);
           triangles.push_back(t1);
           triangles.push_back(t2);

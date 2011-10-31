@@ -455,15 +455,16 @@ int endswith(const char* haystack, const char* needle)
   return (strcmp(&haystack[hlen-nlen], needle)) == 0;
 }
 
-void help() {
+void help(void) {
   cout << "./bezier <.bez or .obj file> <subdiv param> -a -o <output obj>" << endl;
+  exit(0);
 }
 
 //****************************************************
 // the usual stuff, nothing exciting here
 //****************************************************
 int main(int argc, char *argv[]) {
-  if (argc < 3) {
+  if (argc < 2) {
     help();
   }
 
@@ -472,12 +473,15 @@ int main(int argc, char *argv[]) {
   } else if (endswith(argv[1], "obj")) {
     parseObj(argv[1]);
   }
-  subdivParam = atof(argv[2]);
+  if(argc >=3)
+    subdivParam = atof(argv[2]);
+  else
+    subdivParam = 0.1;
 
   usage();
   // Read command line arguments
-  int i = 2;
-  while(++i != argc) {
+  int i = 3;
+  while(i+1 <= argc) {
     if (strcmp(argv[i], "-a")==0) {
       adaptive = true;
     }
@@ -485,10 +489,12 @@ int main(int argc, char *argv[]) {
       strncpy(outfile, argv[i+1], 511);
       outfile[511] = '\0';
       writeout = true;
+      i++;
     }
     else {
       continue;
     }
+    i++;
   }
 
   //This initializes glut
