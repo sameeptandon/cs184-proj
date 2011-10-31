@@ -494,7 +494,7 @@ int main(int argc, char *argv[]) {
 
   usage();
   // Read command line arguments
-  int i = 3;
+  int i = 2;
   while(i+1 <= argc) {
     if (strcmp(argv[i], "-a")==0) {
       adaptive = true;

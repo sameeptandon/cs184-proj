@@ -5,6 +5,11 @@ Our code should compile and run on Ubuntu (tested on hive).
 
 cs184-am submitted the source code
 
+To save a screenshot, run ./bezier with -out <output file>.png and hit ctrl+s when ready (this will close the program and write a screenshot into your specified file name).
+
+To load a .obj file, run ./bezier <obj filename>
+
+Images
 01 - Teapot with uniform subdivision and smooth shading
 02 - Same as 01 but with wireframe
 03 - Teapot with adaptive subdivision and flat shading
