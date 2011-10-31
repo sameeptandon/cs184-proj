@@ -107,18 +107,6 @@ void myDisplay() {
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);				// clear the color buffer
 
-  //glMatrixMode(GL_PROJECTION);					// indicate we are specifying camera transformations
-  //glLoadIdentity();							// make sure transformation is "zero'd"
-
-  //glOrtho(-5, 5, -5, 5, -5, 5);
-  //glMatrixMode(GL_MODELVIEW);
-  //glLoadIdentity();
-  //glEnable(GL_LIGHTING); // turn on the lights, we have power!!!
-
-  //glScaled(.25, .25, 1); // make the scene smaller so we can see the damn thing
-
-  //glColor3f(1.0f,0.5f,0.0f);          // setting the color to orange
- 
   glPushMatrix();
   glScaled(tz,tz,tz);
   glTranslated(tx, ty, 0);
@@ -140,6 +128,33 @@ void myDisplay() {
 
   for (int i = 0; i < triangles.size() ; i++ ) {
     triangles[i].Draw();
+  }
+
+  if (wireFrame) { //hidden line removal code
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(1.0, 1.0);
+    glDisable(GL_LIGHTING);
+    glColor3f(0.0f, 0.0f, 0.0f);
+
+    for( int i = 0; i < patches.size() ; i++ ) {
+      if(adaptive) {
+        patches[i].AdaptiveSubdivide(subdivParam);
+      }
+      else {
+        patches[i].UniformSubdivide(subdivParam);
+      }
+      //patches[i].UniformSubdivide(1.0);
+      //patches[i].Draw();
+    }
+
+    for (int i = 0; i < triangles.size() ; i++ ) {
+      triangles[i].Draw();
+    }
+
+    glEnable(GL_LIGHTING);
+    glDisable(GL_POLYGON_OFFSET_FILL);
   }
 
   glPopMatrix();
