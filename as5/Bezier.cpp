@@ -40,6 +40,7 @@ int last_x = 0;
 int last_y = 0;
 bool smoothShading = true;
 bool wireFrame = false;
+bool hiddenLineRemoval = false;
 double subdivParam;
 
 Vector3d max_v = Vector3d(-9999999, -9999999, -999999);
@@ -130,7 +131,7 @@ void myDisplay() {
     triangles[i].Draw();
   }
 
-  if (wireFrame) { //hidden line removal code
+  if (wireFrame && hiddenLineRemoval) { //hidden line removal code
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_POLYGON_OFFSET_FILL);
@@ -332,6 +333,8 @@ void processNormalKeys(unsigned char key, int x, int y) {
     smoothShading = !smoothShading;
   if (key == 'w')
     wireFrame = !wireFrame; 
+  if (key == 'h')
+    hiddenLineRemoval = !hiddenLineRemoval;
   if (key == 'a')
      adaptive = !adaptive; 
   if (key == '+') 
