@@ -149,13 +149,20 @@ void BezierPatch::UniformSubdivide(double step) {
     glBegin(GL_QUAD_STRIP);
     //Vector3d lastValidNormal = Vector3d(0,0,0);
     for (int i = 0; i < points.size(); i++) {
+      if(firstTime) {
+        if(i % 2 == 0 && (i+3) < points.size()) {
+          Triangle t1 = Triangle(points[ i ], points[i+1], points[i+2]);
+          Triangle t2 = Triangle(points[i+1], points[i+2], points[i+3]);
+          triangles.push_back(t1);
+          triangles.push_back(t2);
+        }
+      }
       glNormal3d(normals[i](0), normals[i](1), normals[i](2));
       glVertex3d(points[i](0), points[i](1), points[i](2));
-
     }
     glEnd();
   }
-
+  firstTime = false;
 }
 
 void BezierPatch::AdaptiveSubdivide(double tau) {
@@ -165,6 +172,7 @@ void BezierPatch::AdaptiveSubdivide(double tau) {
   Vector2d ur = Vector2d(1,1);
   AdaptiveSubdivideHelper(tau, ll, lr, ur);
   AdaptiveSubdivideHelper(tau, ll, ul, ur);
+  firstTime = false;
 }
 
 void BezierPatch::AdaptiveSubdivideHelper(double tau, Vector2d &u1, Vector2d &u2, Vector2d &u3) {
@@ -192,6 +200,8 @@ void BezierPatch::AdaptiveSubdivideHelper(double tau, Vector2d &u1, Vector2d &u2
   int e3 = (x_u23-x23).norm() > tau;
 
   char e321 = (e1 & 0x01) + ((e2 << 1) & 0x02) + ((e3 << 2) & 0x04);
+  
+  Triangle t = Triangle(x1, x2, x3);
 
   switch(e321) {
     case 0b000:
@@ -203,6 +213,9 @@ void BezierPatch::AdaptiveSubdivideHelper(double tau, Vector2d &u1, Vector2d &u2
       glNormal3d(n3(0), n3(1), n3(2));
       glVertex3d(x3(0), x3(1), x3(2));
       glEnd();
+      if(firstTime) {
+        triangles.push_back(t);
+      }
       break;
     case 0b001:
       AdaptiveSubdivideHelper(tau, u1, u2, u31);

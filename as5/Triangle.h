@@ -3,9 +3,8 @@
 #include "Globals.h"
 
 class Triangle { 
-  protected:
-    Vector3d _a, _b, _c, _normal;
   public:
+    Vector3d _a, _b, _c, _normal;
     Triangle(Vector3d, Vector3d, Vector3d);
     ~Triangle();
     Vector3d normal();
