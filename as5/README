@@ -4,3 +4,16 @@ Daiwei Li - cs184-fz
 Our code should compile and run on Ubuntu (tested on hive).
 
 cs184-am submitted the source code
+
+01 - Teapot with uniform subdivision and smooth shading
+02 - Same as 01 but with wireframe
+03 - Teapot with adaptive subdivision and flat shading
+04 - Same as 03 but with wireframe
+05 - Donut with adaptive subdivision, .bez file generated with circle.py
+06 - Same as 05 but without wireframe
+07 - Another wireframe teapot with adaptive subdivision, to show contrast with image-08
+08 - Same as 07 but with hidden line removal (lines on the back side of the object aren't shown)
+09 - The angel obj file from assignment 4, just to show that we added support for obj input
+10 - Output obj file of the teapot using adaptive subdivision, imported into Maya
+11 - Same as 10, but with some lighting inside Maya
+12 - Just to show that we can render the arch input as well
