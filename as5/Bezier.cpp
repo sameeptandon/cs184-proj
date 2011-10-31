@@ -510,10 +510,6 @@ int main(int argc, char *argv[]) {
       outputfile[255] = '\0';
       i += 1;
     }
- 
-    else {
-      continue;
-    }
     i++;
   }
 
